@@ -1,0 +1,20 @@
+{
+    "welcome": "Xin chào",
+    "newword": "Thêm từ vựng mới",
+    "preferences": "Tùy chọn",
+    "quoteopenapp": "Get better every day",
+    "logout": "Đăng xuất",
+    "words": "Từ vựng",
+    "learn": "Học ngay",
+    "schedule": "Đặt lịch học",
+    "searchword": "Tìm từ vựng của bạn",
+    "save": "Lưu lại",
+    "guildaddword": "Nhập từ vựng, định nghĩa, câu gợi ý cho từ vựng đó để dễ nhớ hơn.",
+    "definition": "Định nghĩa",
+    "sentence": "Câu gợi ý",
+    "require": "bắt buộc",
+    "back": "Trở lại",
+    "login_with_fb":"Đăng nhập với Facebook",
+    "login_with_google":"Đăng nhập với Google",
+    "login_with_apple":"Đăng nhập với Apple"
+}

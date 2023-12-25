@@ -1,0 +1,20 @@
+{
+    "welcome": "Welcome",
+    "newword": "Add New Words Definition",
+    "preferences": "Preferences",
+    "quoteopenapp": "Just learn five words a day.",
+    "logout": "Logout",
+    "words": "Words",
+    "learn": "Learn now",
+    "schedule": "Schedule",
+    "searchword": "Search your word",
+    "save": "Save",
+    "guildaddword": "Write a word, definition and sentence have that word to remember it",
+    "definition": "Definition",
+    "sentence": "Sentence",
+    "require": "require",
+    "back": "Back",
+    "login_with_fb":"Login With Facebook",
+    "login_with_google":"Login With Google",
+    "login_with_apple":"Login With Apple"
+}

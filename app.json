@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "hippo",
+    "name": "hippocampusvn",
     "slug": "hippo",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,23 +8,56 @@
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hippocampusvn",
+      "usesAppleSignIn": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.hippocampusvn"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-apple-authentication",
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "245918734979137",
+          "clientToken": "245d1e857059ad124436efbf7cdd3036",
+          "displayName": "Hipoca",
+          "scheme": "fb245918734979137",
+          "advertiserIDCollectionEnabled": false,
+          "autoLogAppEventsEnabled": false,
+          "isAutoInitEnabled": true,
+          "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+        }
+      ],
+      "expo-localization"
+    ],
+    "scheme": "hippocampusvn",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "5ab54368-1a19-4449-8ac2-3cec0db5dec0"
+      }
     }
   }
 }
