@@ -6,6 +6,7 @@ const CheckLogin = () => {
     return new Promise(async (ok, notok) => {
         let credentialLogin = await SecureStore.getItemAsync("logindata")
         credentialLogin = JSON.parse(credentialLogin)
+        console.info("🚀 ~ file: checklogin.js:9 ~ returnnewPromise ~ credentialLogin:", credentialLogin)
 
         if(credentialLogin.typeLogin == "apple-login"){
             let checkState = await AppleAuthentication.getCredentialStateAsync(JSON.parse(credentialApple).user)

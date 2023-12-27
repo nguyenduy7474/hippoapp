@@ -91,7 +91,7 @@ export default function QuizItem({ question, scrollTo, nextIndex, answerResult, 
             >
                 <Text style={[styles.textanswer, {
                     color: colortext,
-                    fontWeight: color ? "bold" : "",
+                    fontWeight: color ? "bold" : "black",
                 }]}>{item}</Text>
                 {correct == 1 || (correct == 0 && data.result == index) ? (
                     <Image source={require('../../../assets/images/checkwhite.png')} style={{ width: scale(22), height: scale(22), marginRight: 10}}/>

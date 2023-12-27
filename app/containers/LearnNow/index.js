@@ -35,7 +35,6 @@ export default function LearnNow() {
                 style={{ opacity: 0.5 }}
                 disabled={true}
             />
-
 {/*             <LearnItem 
                 title="Strike"
                 description="Ban5 se4 xem ban5 se4 xem ban5 se4 xam"

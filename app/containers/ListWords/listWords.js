@@ -61,9 +61,12 @@ export default function ListWordsComponent({ searchtext}) {
                     return true
                 }
             })
-            list.current?.prepareForLayoutAnimationRender();
-            // After removing the item, we can start the animation.
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+            if(Platform.OS != 'android'){
+                list.current?.prepareForLayoutAnimationRender();
+                // After removing the item, we can start the animation.
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+            }
+
             setDataword(listSearch)
 
         }
