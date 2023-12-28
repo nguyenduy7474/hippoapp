@@ -3,7 +3,7 @@ import StatusBarComponent from '../../components/StatusBar'
 import TopMenu from '../../components/TopMenu';
 import { LinearGradient } from 'expo-linear-gradient';
 import { scale } from 'react-native-size-matters';
-import { themeColor2 } from '../../contants/style';
+import { meaningbackground, themeColor2 } from '../../contants/style';
 import { useEffect, useRef, useState } from 'react';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { FlashList } from '@shopify/flash-list';
@@ -23,9 +23,15 @@ export default function Schedule() {
 
     const openTime = (type) => {
         if(type == "start"){
-            setShowstart(true)
+            if(!showstart){
+                setShowend(false)
+            }
+            setShowstart(!showstart)
         }else{
-            setShowend(true)
+            if(!showend){
+                setShowstart(false)
+            }
+            setShowend(!showend)
         }
     }
 
@@ -49,6 +55,13 @@ export default function Schedule() {
         setNotiDay(notiDay)
         setUpdatenoti(!updatenoti)
     }
+
+    useEffect(() => {
+        if(!enabledNoti){
+            setShowstart(false)
+            setShowend(false)
+        }
+    }, [enabledNoti])
 
     const dateWeekItem = (day, index) => {
 
@@ -75,7 +88,7 @@ export default function Schedule() {
                     </View>
                     <ToggleSwitch
                         isOn={enabledNoti}
-                        onColor="#2fb55c"
+                        onColor={meaningbackground}
                         offColor="#e8e8e8"
                         labelStyle={{ color: "black", fontWeight: "900" }}
                         size="large"
@@ -184,6 +197,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         margin: 10,
         backgroundColor: themeColor2,
+        marginBottom: 5
     },
     timeRow: {
         padding: 15,

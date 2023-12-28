@@ -3,8 +3,10 @@ import { themeColor } from '../contants/style';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import i18n from '../i18n';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-export default function DoneMenu() {
+
+export default function DoneMenu({ onDelete }) {
 
     const goback = () => {
         router.back()
@@ -16,7 +18,7 @@ export default function DoneMenu() {
                 <Text style={styles.donetitle}>{i18n.t('back')}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={goback}>
-                <Text style={styles.donetitle}>{i18n.t('save')}</Text>
+                <Text style={styles.donetitle}>{onDelete ? <Ionicons name='trash-outline' size={32} color={"white"}/> : <Ionicons name='save-outline' size={32} color={"white"}/>}</Text>
             </TouchableOpacity>
         </View>
     );

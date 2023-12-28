@@ -1,8 +1,11 @@
-import { Pressable, Text, View, StyleSheet, TouchableOpacity, LayoutAnimation, UIManager, Platform } from 'react-native';
+import { Pressable, Text, View, StyleSheet, TouchableOpacity, LayoutAnimation, UIManager, Platform} from 'react-native';
 import { tabbarcolor, themeColor3 } from '../../contants/style';
 import { FlashList } from "@shopify/flash-list";
 import { useEffect, useState, useRef } from 'react';
 import { router } from 'expo-router';
+import LottieView from 'lottie-react-native';
+import * as Device from 'expo-device';
+import { scale } from 'react-native-size-matters';
 
 if (
     Platform.OS === 'android' &&
@@ -26,7 +29,7 @@ const DATA = [
         name: "a3",
         word: "Phone",
         definition: "Điện Thoại"
-    },
+    }
 ];
 
 const renderItem = ({ name, word, definition, index }) => {
@@ -74,14 +77,26 @@ export default function ListWordsComponent({ searchtext}) {
 
     return (
         <View style={styles.container}>
-            <FlashList
-                data={dataword}
-                renderItem={({ item, index }) => renderItem({...item, index})}
-                estimatedItemSize={200}
-                numColumns={2}
-                keyExtractor={item => item.word}
-                ref={list}
-            />
+            {dataword.length > 0 ? (
+                <FlashList
+                    data={dataword}
+                    renderItem={({ item, index }) => renderItem({...item, index})}
+                    estimatedItemSize={200}
+                    numColumns={2}
+                    keyExtractor={item => item.name}
+                    ref={list}
+                />
+            ): (
+                <LottieView
+                    autoPlay={true}
+                    style={{
+                        width: "100%"
+                    }}
+                    // Find more Lottie files at https://lottiefiles.com/featured
+                    source={require('../../../assets/lottie/notfound.json')}
+                />
+            )}
+
         </View>
       );
 }
@@ -91,7 +106,7 @@ const styles = StyleSheet.create({
         flex: 1,
         width: "100%",
         alignSelf:"center",
-        paddingHorizontal: 10
+        paddingHorizontal: 10,
     },
     itemcontainer: {
         alignItems: "center",

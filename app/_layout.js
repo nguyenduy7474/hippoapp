@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import { themeColor } from './contants/style';
+import i18n from './i18n';
 
 export default function Layout() {
     return (
@@ -29,7 +30,7 @@ export default function Layout() {
                 }} 
             />
             <Stack.Screen name="containers/Profile/index" options={{
-                    headerTitle: 'Settings',
+                    headerTitle: i18n.t('settings'),
                     gestureDirection: "horizontal",
                     gestureEnabled: true
                 }} 

@@ -16,5 +16,13 @@
     "back": "Trở lại",
     "login_with_fb":"Đăng nhập với Facebook",
     "login_with_google":"Đăng nhập với Google",
-    "login_with_apple":"Đăng nhập với Apple"
+    "login_with_apple":"Đăng nhập với Apple",
+    "quizdescription": "Trả lời những câu hỏi trắc nghiệm để duy trì từ vựng luôn được ghi nhớ trong đầu",
+    "flashcarddescription": "Nhập lại từ vựng nhằm ghi nhớ sâu và đúng chính tả",
+    "quiz": "Trắc nghiệm",
+    "flash_card": "Thẻ ghi nhớ",
+    "version": "Phiên bản",
+    "settings": "Cài đặt",
+    "changelanguage": "Khởi động lại app để áp dụng ngôn ngữ",
+    "delete_word": "Xóa từ"
 }

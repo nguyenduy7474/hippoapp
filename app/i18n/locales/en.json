@@ -16,5 +16,13 @@
     "back": "Back",
     "login_with_fb":"Login With Facebook",
     "login_with_google":"Login With Google",
-    "login_with_apple":"Login With Apple"
+    "login_with_apple":"Login With Apple",
+    "quizdescription": "Answering multiple-choice questions helps maintain vocabulary always remembered in the mind.",
+    "flashcarddescription": "Rewrite vocabulary to remember more deeply and ensure correct spelling.",
+    "quiz": "Quiz",
+    "flash_card": "Flash Card",
+    "version": "Version",
+    "settings": "Settings",
+    "changelanguage": "Restart app to apply language",
+    "delete_word": "Delete Word"
 }

@@ -1,11 +1,17 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View, TouchableOpacity, Dimensions } from 'react-native';
+import Constants from 'expo-constants';
+import { router, useLocalSearchParams } from 'expo-router';
+
 import StatusBarComponent from '../../components/StatusBar'
 import DoneMenu from '../../components/DoneMenu';
 import { Image } from 'expo-image';
 import { useState } from 'react';
 import i18n from '../../i18n';
-import { useLocalSearchParams } from 'expo-router';
-import { inputbackgroundcolor } from '../../contants/style';
+import { inputbackgroundcolor, themeColor2 } from '../../contants/style';
+import { scale } from 'react-native-size-matters';
+
+const statusBarHeight = Constants.statusBarHeight;
+const windowHeight = Dimensions.get('window').height;
 
 const textColor = "#5e5e5e"
 
@@ -16,10 +22,21 @@ export default function AddWord() {
 
     const { word_name } = useLocalSearchParams();
 
+    const saveWord = () => {
+        console.info("🚀 ~ file: index.js:23 ~ saveWord ~ saveWord:")
+        router.back()
+    }
+
+    const onDelete = () => {
+
+    }
+
     return (
         <View style={styles.container}>
             <StatusBarComponent />
-            <DoneMenu />
+            <DoneMenu 
+                onDelete={onDelete}
+            />
             <View style={styles.topView}>
                 <Image source={require('../../../assets/images/writebook.png')} style={styles.image}/>
                 <Text style={styles.textdes}>{i18n.t('guildaddword')}</Text>
@@ -43,8 +60,11 @@ export default function AddWord() {
                     value={remindSentence}
                     placeholder={i18n.t('sentence')}
                 />
+                <TouchableOpacity style={styles.buttonadd} onPress={saveWord}>
+                    <Text style={styles.buttontext}>{i18n.t('save')}</Text>
+                </TouchableOpacity>
             </View>
-            
+
         </View>
       );
 }
@@ -56,11 +76,11 @@ const styles = StyleSheet.create({
         marginTop: 20,
         paddingVertical: 10,
         borderRadius: 10,
-        fontSize: 20,
+        fontSize: scale(16),
         color: textColor,
         paddingLeft: 10,
         textAlignVertical: 'top',
-        height:200
+        height: scale(100)
     },
     input: {
         backgroundColor: inputbackgroundcolor,
@@ -68,12 +88,12 @@ const styles = StyleSheet.create({
         marginTop: 20,
         paddingVertical: 20,
         borderRadius: 10,
-        fontSize: 20,
+        fontSize: scale(16),
         color: textColor,
         paddingLeft: 10
     },
     textdes: {
-        fontSize: 18,
+        fontSize: scale(16),
         textAlign: "center",
         width: "70%",
         marginTop: 20,
@@ -81,11 +101,27 @@ const styles = StyleSheet.create({
     },
     topView: {
         paddingHorizontal: 10,
-        marginTop: 50,
-        alignItems:"center"
+        paddingTop: 50,
+        alignItems:"center",
+        height: windowHeight - statusBarHeight - 50,
     },
     image: {
-        width: 100,
-        height: 100,
+        width: scale(100),
+        height: scale(100),
+    },
+    buttonadd: {
+        backgroundColor: themeColor2,
+        width: "100%",
+        alignItems: "center",
+        paddingVertical: 18,
+        alignSelf: "center",
+        borderRadius: 10,
+        position: "absolute",
+        bottom: scale(50)
+    },
+    buttontext: {
+        color: "white",
+        fontSize: scale(16),
+        fontWeight: "bold"
     }
 })

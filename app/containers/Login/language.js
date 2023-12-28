@@ -3,27 +3,34 @@ import StatusBarComponent from '../../components/StatusBar'
 import TopMenu from '../../components/TopMenu';
 import { themeColor2 } from '../../contants/style';
 import { Image } from 'expo-image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getLocales, getCalendars } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { scale } from 'react-native-size-matters';
+import FlashMessage from "react-native-flash-message";
+import i18n from '../../i18n';
 
 const vncode = "vn"
 
 export default function Language() {
     const [languagecode, setLanguagecode] = useState("")
+    const flashmessage = useRef(null)
 
     const changeLanguage = async (languagecode) => {
         setLanguagecode(languagecode)
         await AsyncStorage.setItem('languagecode', languagecode)
+        flashmessage.current.showMessage({
+            message: i18n.t('changelanguage'),
+            type: "success",
+        });
     }
 
     const loadLanguage = async(languagecode) => {
         const value = await AsyncStorage.getItem('languagecode');
         if(!value){
-            changeLanguage(getLocales()[0].regionCode.toLowerCase())
+            setLanguagecode(getLocales()[0].regionCode.toLowerCase())
         }else{
-            changeLanguage(value)
+            setLanguagecode(value)
         }
     }
 
@@ -48,6 +55,15 @@ export default function Language() {
                 <Image source={require('../../../assets/images/usaflag.png')} style={styles.flag}/>
                 <Text style={[styles.buttontext, {color: languagecode != vncode ? "white" : themeColor2 }]}>English</Text>
             </TouchableOpacity>
+            <FlashMessage 
+                ref={flashmessage} 
+                floating={true}
+                position="bottom"
+                icon="success"
+                style={{
+                    top: 40
+                }}
+            />
         </View>
       );
 }

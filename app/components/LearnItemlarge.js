@@ -3,6 +3,7 @@ import Constants from 'expo-constants';
 import { subtextcolor, themeColor, themeColor2 } from '../contants/style';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import { scale } from 'react-native-size-matters';
 
 
 export default function LearnItemLarge({ title, description, imagesrc, iconposition, onpress, color, style, disabled = false }) {
@@ -24,6 +25,9 @@ export default function LearnItemLarge({ title, description, imagesrc, iconposit
         <View style={styles.leftside}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.description}>{description}</Text>
+          {disabled ? (
+            <Text style={{ color: "#780000", fontWeight: "bold", fontSize: scale(18)}}>Coming soon</Text>
+          ): ""}
         </View>
       </LinearGradient>
 
@@ -46,13 +50,13 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   title:{
-    fontSize: 30,
+    fontSize: scale(28),
     fontWeight: "bold",
     color: "white",
     marginBottom: 10
   },
   description: {
-    fontSize: 16,
+    fontSize: scale(14),
     color: subtextcolor
   },
   icon:{

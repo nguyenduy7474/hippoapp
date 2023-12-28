@@ -7,8 +7,7 @@ import Language from '../Login/language';
 
 export default function Profile() {
     const logout = () => {
-        SecureStore.deleteItemAsync("apple-login")
-        SecureStore.deleteItemAsync("fb-login")
+        SecureStore.deleteItemAsync("logindata")
         SecureStore.deleteItemAsync("email")
         router.replace({pathname: "containers/Login", params: { logout: true }})
     }
@@ -19,16 +18,16 @@ export default function Profile() {
                 <Text style={styles.textinfo}>Duy Nguyen</Text>
                 <Text style={styles.subtextinfo}>nguyenduy7474@gmail.com</Text>
             </View>
-            <TouchableOpacity style={styles.buttonadd}>
+{/*             <TouchableOpacity style={styles.buttonadd}>
                 <Text style={styles.buttontext}>{i18n.t('preferences')}</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity style={styles.buttonadd} onPress={logout}>
-                <Text style={styles.buttontext}>Logout</Text>
+                <Text style={styles.buttontext}>{i18n.t('logout')}</Text>
             </TouchableOpacity>
             <View style={styles.langview}>
                 <Language />
             </View>
-            <Text style={styles.subtextinfo}>Version: {pjson.version}</Text>
+            <Text style={styles.subtextinfo}>{i18n.t('version')}: {pjson.version}</Text>
         </View>
       );
 }
