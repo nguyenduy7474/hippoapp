@@ -4,16 +4,23 @@ import TopMenu from '../../components/TopMenu';
 import LearnItemLarge from '../../components/LearnItemlarge';
 import { router } from 'expo-router';
 import i18n from '../../i18n';
+import { getQuestionsQuiz } from '../../api';
+import { saveQuestiosQuiz } from '../../redux/action';
+import { useDispatch } from 'react-redux';
 
 export default function LearnNow() {
+    const dispatch = useDispatch()
 
     const flashcardLearn = () => {
         router.push('containers/FlashCard')
     }
 
-    const quizLearn = () => {
+    const quizLearn = async () => {
+        let dataQuiz = await getQuestionsQuiz()
+        dispatch(saveQuestiosQuiz(dataQuiz))
         router.push('containers/Quiz')
     }
+    
 
     return (
         <View>

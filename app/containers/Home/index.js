@@ -9,31 +9,74 @@ import { tabbarcolor } from '../../contants/style';
 import * as Device from 'expo-device';
 import i18n from '../../i18n';
 import LottieView from 'lottie-react-native';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { scale } from 'react-native-size-matters';
+import { checkfirsttime } from '../../api';
+import { router, useLocalSearchParams } from 'expo-router';
+
 
 const Tab = createBottomTabNavigator();
 
 const HomePage = () => {
-  const animationWord = useRef(null);
-  const animationLearn = useRef(null);
-  const animationSchedule = useRef(null);
+  let { signed } = useLocalSearchParams()
+
+  useEffect(() => {
+    if(!signed){
+      checkfirsttime().then((data) => {
+        if(!data){
+          router.replace("/containers/Onboard")
+        }
+      })
+    }
+
+  }, [])
+  
 
   const borderRadius = 15
-  const iconSizePlus = Device.osName == "Android" ? scale(100) : scale(150)
 
   return (
-    <Tab.Navigator   screenOptions={{
-      tabBarStyle: { 
-        height: Device.osName == "Android" ? 60 : 100,
-        borderTopLeftRadius: borderRadius,
-        borderTopRightRadius: borderRadius,
-        borderTopWidth: 1,
-        borderLeftWidth: 1,
-        borderRightWidth: 1,
-        borderColor: "#d1d1d1"
-      },
-    }}>
+    <Tab.Navigator  
+      screenOptions={({ route }) => ({
+        tabBarStyle: { 
+          height: Device.osName == "Android" ? 60 : 100,
+          borderTopLeftRadius: borderRadius,
+          borderTopRightRadius: borderRadius,
+          borderTopWidth: 1,
+          borderLeftWidth: 1,
+          borderRightWidth: 1,
+          borderColor: "#d1d1d1"
+        },
+        tabBarIcon: ({ focused, color, size }) => {
+          const animationWord = useRef(null);
+          let icon = require('../../../assets/lottie/book.json')
+          let iconSize = Device.osName == "Android" ? scale(35) : scale(40)
+
+          if(route.name === '/containers/LearnNow'){
+            icon = require('../../../assets/lottie/learnnow.json')
+            iconSize = Device.osName == "Android" ? scale(45) : scale(60)
+          }
+
+          if(route.name === '/containers/Schedule'){
+            icon = require('../../../assets/lottie/schedule.json')
+            iconSize = Device.osName == "Android" ? scale(35) : scale(50)
+          }
+
+          return (
+          <LottieView
+            ref={animationWord}
+            style={{
+              width: iconSize,
+              height: iconSize,
+            }}
+            // Find more Lottie files at https://lottiefiles.com/featured'
+            autoPlay={focused}
+            loop={false}
+            progress={1}
+            useNativeDriver={true}
+            source={icon}
+          />
+      )},
+    })}>
       <Tab.Screen 
         name="/containers/ListWords"
         component={ListWords} 
@@ -41,22 +84,10 @@ const HomePage = () => {
           headerShown: false,
           tabBarLabel: `${i18n.t('words')}`,
           tabBarLabelStyle: {
-            fontSize: 14,
+            fontSize: scale(10),
             marginBottom: 3,
             fontWeight: "bold"
           },
-          tabBarIcon: ({ focused, color, size }) => (
-            <LottieView
-              autoPlay={focused ? true : false}
-              ref={animationWord}
-              style={{
-                width: Device.osName == "Android" ? scale(100) : scale(150),
-                height: Device.osName == "Android" ? scale(100) : scale(150),
-              }}
-              // Find more Lottie files at https://lottiefiles.com/featured
-              source={require('../../../assets/lottie/book.json')}
-            />
-          ),
           tabBarItemStyle: {
             borderTopLeftRadius: borderRadius,
             borderTopRightRadius: borderRadius,
@@ -74,22 +105,10 @@ const HomePage = () => {
           headerShown: false,
           tabBarLabel: `${i18n.t('learn')}`,
           tabBarLabelStyle: {
-            fontSize: 14,
+            fontSize: scale(10),
             marginBottom: 3,
             fontWeight: "bold"
           },
-          tabBarIcon: ({ focused, color, size }) => (
-            <LottieView
-              autoPlay={focused ? true : false}
-              ref={animationLearn}
-              style={{
-                width: Device.osName == "Android" ? scale(35) : scale(50),
-                height: Device.osName == "Android" ? scale(35) : scale(50),
-              }}
-              // Find more Lottie files at https://lottiefiles.com/featured
-              source={require('../../../assets/lottie/brain.json')}
-            />
-          ),
           tabBarItemStyle: {
             borderTopLeftRadius: borderRadius,
             borderTopRightRadius: borderRadius,
@@ -107,22 +126,10 @@ const HomePage = () => {
           headerShown: false,
           tabBarLabel: `${i18n.t('schedule')}`,
           tabBarLabelStyle: {
-            fontSize: 14,
+            fontSize: scale(10),
             marginBottom: 3,
             fontWeight: "bold"
           },
-          tabBarIcon: ({ focused, color, size }) => (
-            <LottieView
-              autoPlay={focused ? true : false}
-              ref={animationSchedule}
-              style={{
-                width: Device.osName == "Android" ? scale(35) : scale(50),
-                height: Device.osName == "Android" ? scale(35) : scale(50),
-              }}
-              // Find more Lottie files at https://lottiefiles.com/featured
-              source={require('../../../assets/lottie/schedule.json')}
-            />
-          ),
           tabBarItemStyle: {
             borderTopLeftRadius: borderRadius,
             borderTopRightRadius: borderRadius,

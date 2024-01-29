@@ -1,34 +1,44 @@
-import { Pressable, StyleSheet, Text, TouchableOpacity, View, LayoutAnimation, Platform } from 'react-native';
-import StatusBarComponent from '../../components/StatusBar'
-import TopMenu from '../../components/TopMenu';
-import { LinearGradient } from 'expo-linear-gradient';
-import { scale } from 'react-native-size-matters';
-import { meaningbackground, themeColor2 } from '../../contants/style';
+import { Pressable, StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { FlashList } from '@shopify/flash-list';
 import ToggleSwitch from 'toggle-switch-react-native'
+import { scale } from 'react-native-size-matters';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const color = ["#614385", "#516395"]
-const dateWeek = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"] 
+import { meaningbackground, tabbarcolor, themeColor2 } from '../../contants/style';
+import i18n from '../../i18n';
+import StatusBarComponent from '../../components/StatusBar'
+import TopMenu from '../../components/TopMenu';
+import { getSchedule, updateSchedule } from '../../api/ocrm';
+
+const dateWeekEng = [
+    { "name": 0, "active": true, "day": "shortSunday" }, 
+    { "name": 1, "active": true, "day": "shortMonday" }, 
+    { "name": 2, "active": true, "day": "shortTuesday" }, 
+    { "name": 3, "active": true, "day": "shortWednesday" }, 
+    { "name": 4, "active": true, "day": "shortThursday" }, 
+    { "name": 5, "active": true, "day": "shortFriday" },
+    { "name": 6, "active": true, "day": "shortSaturday" }
+]
 
 export default function Schedule() {
     const [startTime, setStartTime] = useState(new Date("2023-01-01"))
     const [endTime, setEndTime] = useState(new Date("2025-01-01T20:00"))
     const [showstart, setShowstart] = useState(false)
     const [showend, setShowend] = useState(false)
-    const [notiDay, setNotiDay] = useState([])
     const [updatenoti, setUpdatenoti] = useState(false)
     const [enabledNoti, setEnabledNoti] = useState(true)
+    const [dateofweek, setDateofweek] = useState([])
 
     const openTime = (type) => {
-        if(type == "start"){
-            if(!showstart){
+        if (type == "start") {
+            if (!showstart) {
                 setShowend(false)
             }
             setShowstart(!showstart)
-        }else{
-            if(!showend){
+        } else {
+            if (!showend) {
                 setShowstart(false)
             }
             setShowend(!showend)
@@ -36,41 +46,63 @@ export default function Schedule() {
     }
 
     const changeTime = (event, value) => {
-        if(showstart){
-            setShowstart(false)
+        if (showstart) {
+            // setShowstart(false)
             setStartTime(value)
-            
-        }else{
-            setShowend(false)
+
+        } else {
+            // setShowend(false)
             setEndTime(value)
         }
     }
 
     const chooseDayWeek = (index) => {
-        if(notiDay[index]){
-            notiDay[index] = false
-        }else{
-            notiDay[index] = true
-        }
-        setNotiDay(notiDay)
+        dateofweek[index].active = !dateofweek[index].active
+        setDateofweek(dateofweek)
         setUpdatenoti(!updatenoti)
     }
 
+    const dateWeekCheck = async () => {
+        let lang = await AsyncStorage.getItem('languagecode')
+        let dataSchedule = await getSchedule()
+        
+        setDateofweek(JSON.parse(dataSchedule.data.weekday))
+    }
+
     useEffect(() => {
-        if(!enabledNoti){
+        if(dateofweek.length == 0){
+            return
+        }
+        console.info("🚀 ~ file: index.js:78 ~ useEffect ~ enabledNoti:", enabledNoti)
+
+        if (!enabledNoti) {
             setShowstart(false)
             setShowend(false)
         }
-    }, [enabledNoti])
 
-    const dateWeekItem = (day, index) => {
+        let datasend = {
+            "enable":  enabledNoti ? 1 : 0,
+            "start_at": `${startTime.getHours() < 10 ? "0" + startTime.getHours() : startTime.getHours()}:${startTime.getMinutes() < 10 ? "0" + startTime.getMinutes() : startTime.getMinutes()}:00`,
+            "end_at": `${endTime.getHours() < 10 ? "0" + endTime.getHours() : endTime.getHours()}:${endTime.getMinutes() < 10 ? "0" + endTime.getMinutes() : endTime.getMinutes()}:00`,
+            "weekday": JSON.stringify(dateofweek)
+        }
+        updateSchedule(datasend)
+        console.info("🚀 ~ file: index.js:76 ~ useEffect ~ datasend:", datasend)
 
+    }, [enabledNoti, startTime, endTime, updatenoti])
+
+
+    useEffect(() => {
+        dateWeekCheck()
+    }, [])
+
+    const dateWeekItem = ({ name, day }, index) => {
         return (
-            <TouchableOpacity 
-                style={[styles.daylearn, { backgroundColor: notiDay[index] ? "#3697ba" : "white"}]}
+            <TouchableOpacity
+                style={[styles.daylearn, { backgroundColor: dateofweek[index].active ? meaningbackground : "white" }]}
                 onPress={() => chooseDayWeek(index)}
             >
-                <Text style={[styles.dayText, { color: notiDay[index] ? "white" : "black"}]}>{day}</Text>
+                <Text style={[styles.dayText, { color: dateofweek[index].active ? "white" : "black" }]}>{i18n.t(day)}</Text>
             </TouchableOpacity>
         )
     }
@@ -82,9 +114,9 @@ export default function Schedule() {
             <View
                 style={styles.timeContainer}
             >
-                <View style={[styles.timeRow, { borderTopColor:"#fff0f0", borderTopWidth: 1}]}>
-                    <View style={[styles.textBox, { width: scale(200)}]}>
-                        <Text style={styles.timeText}>Enable Notification</Text>
+                <View style={[styles.timeRow, { borderTopColor: "#fff0f0", borderTopWidth: 1 }]}>
+                    <View style={[styles.textBox, { width: scale(200) }]}>
+                        <Text style={styles.timeText}>{i18n.t('enable_notification')}</Text>
                     </View>
                     <ToggleSwitch
                         isOn={enabledNoti}
@@ -103,21 +135,21 @@ export default function Schedule() {
                     >
                         <View style={styles.timeRow}>
                             <View style={styles.textBox}>
-                                <Text style={styles.timeText}>Start At</Text>
+                                <Text style={styles.timeText}>{i18n.t('start_at')}</Text>
                             </View>
-                            <TouchableOpacity 
-                                style={[styles.textBox, { backgroundColor: "#1d997c", alignItems: "center",}]}
+                            <TouchableOpacity
+                                style={[styles.textBox, { backgroundColor: meaningbackground, alignItems: "center", }]}
                                 onPress={() => openTime("start")}
                             >
                                 <Text style={styles.timeText}>{startTime.getHours() < 10 ? `0${startTime.getHours()}` : startTime.getHours()}:{startTime.getMinutes() < 10 ? `0${startTime.getMinutes()}` : startTime.getMinutes()}</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={[styles.timeRow, { borderTopColor:"#fff0f0", borderTopWidth: 1}]}>
+                        <View style={[styles.timeRow, { borderTopColor: meaningbackground, borderTopWidth: 1 }]}>
                             <View style={styles.textBox}>
-                                <Text style={styles.timeText}>End At</Text>
+                                <Text style={styles.timeText}>{i18n.t('end_at')}</Text>
                             </View>
-                            <TouchableOpacity 
-                                style={[styles.textBox, { backgroundColor: "#1d997c", alignItems: "center",}]}
+                            <TouchableOpacity
+                                style={[styles.textBox, { backgroundColor: meaningbackground, alignItems: "center", }]}
                                 onPress={() => openTime("end")}
                             >
                                 <Text style={styles.timeText}>{endTime.getHours() < 10 ? `0${endTime.getHours()}` : endTime.getHours()}:{endTime.getMinutes() < 10 ? `0${endTime.getMinutes()}` : endTime.getMinutes()}</Text>
@@ -128,35 +160,38 @@ export default function Schedule() {
                         style={styles.timeContainer}
                     >
                         <View>
-                            <Text style={styles.title}>Lặp lại</Text>
+                            <Text style={styles.title}>{i18n.t('repeat')}</Text>
                             <View style={[styles.timeRow, { justifyContent: "center" }]}>
-                                <FlashList
-                                    data={dateWeek}
-                                    renderItem={({ item, index }) => dateWeekItem(item, index)}
-                                    keyExtractor={item => item.toString()}
-                                    horizontal
-                                    scrollEnabled={false}
-                                    showsHorizontalScrollIndicator={false}
-                                    extraData={updatenoti}
-                                    estimatedItemSize={7}
-                                />
+                                {dateofweek.length > 0 ? (
+                                    <FlashList
+                                        data={dateofweek}
+                                        renderItem={({ item, index }) => dateWeekItem(item, index)}
+                                        keyExtractor={item => item.name.toString()}
+                                        horizontal
+                                        scrollEnabled={false}
+                                        showsHorizontalScrollIndicator={false}
+                                        extraData={updatenoti}
+                                        estimatedItemSize={7}
+                                    />
+                                ): ""}
+
                             </View>
                         </View>
-                        <View style={[styles.timeRow, { borderTopColor:"#fff0f0", borderTopWidth: 1}]}>
-                            <View style={styles.textBox}>
-                                <Text style={styles.timeText}>Sound</Text>
+                        <View style={[styles.timeRow, { borderTopColor: "#fff0f0", borderTopWidth: 1 }]}>
+                            <View style={[styles.textBox, , { width: scale(200) }]}>
+                                <Text style={styles.timeText}>{i18n.t('sound')}</Text>
                             </View>
-                            <TouchableOpacity 
-                                style={[styles.textBox, { backgroundColor: "#1d997c", alignItems: "center",}]}
+                            <TouchableOpacity
+                                style={[styles.textBox, { backgroundColor: meaningbackground, alignItems: "center", }]}
                                 disabled
                             >
-                                <Text style={[styles.timeText]}>vippro</Text>
+                                <Text style={[styles.timeText]}>Hippo</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
-            ): ""}
-            
+            ) : ""}
+
             {showstart ? (
                 <RNDateTimePicker
                     testID="dateTimePicker1"
@@ -168,7 +203,7 @@ export default function Schedule() {
                     minuteInterval={15}
 
                 />
-            ): ""}
+            ) : ""}
             {showend && (
                 <RNDateTimePicker
                     testID="dateTimePicker2"
@@ -180,7 +215,7 @@ export default function Schedule() {
                     minuteInterval={15}
                 />
             )}
-{/*             <DateTimePicker
+            {/*             <DateTimePicker
                 testID="dateTimePicker"
                 value={new Date()}
                 mode={"time"}
@@ -189,14 +224,14 @@ export default function Schedule() {
                 onChange={onChange}
             /> */}
         </View>
-      );
+    );
 }
 
 const styles = StyleSheet.create({
     timeContainer: {
         borderRadius: 10,
         margin: 10,
-        backgroundColor: themeColor2,
+        backgroundColor: tabbarcolor,
         marginBottom: 5
     },
     timeRow: {

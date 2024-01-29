@@ -1,11 +1,13 @@
 import { Text, View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import { inputbackgroundcolor, tabbarcolor } from '../../contants/style';
+import { inputbackgroundcolor, tabbarcolor, colorWrong } from '../../contants/style';
 import Constants from 'expo-constants';
 import { FlashList } from '@shopify/flash-list';
 import { scale } from 'react-native-size-matters';
 import { useEffect, useState } from 'react';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
+import { BlurView } from "@react-native-community/blur";
+import { endQuiz, failQuiz } from '../../api';
 
 
 const statusBarHeight = Constants.statusBarHeight;
@@ -13,22 +15,43 @@ const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
 const colorCorrect = tabbarcolor
-const colorWrong = "#f25246"
 
-export default function QuizItem({ question, scrollTo, nextIndex, answerResult, lose }) {
+export default function QuizItem({ 
+    question, 
+    scrollTo, 
+    nextIndex, 
+    answerResult, 
+    lose, 
+    done,
+    dataquiz,
+    setDataQuiz,
+    index,
+    questionname
+}) {
     const [doneAnswer, setDoneAnswer] = useState(false)
     const [clickAnswer, setClickAnswer] = useState(-1)
     const [countcorrect, setCountCorrect] = useState(0)
     const [backgroundColor, setBackgroundColor] = useState("white")
     const [textColor, setTextColor] = useState("black")
-    const [data, setData] = useState(question)
+    const [data, setData] = useState({})
     const [buttonBackgroundColor, setBbuttonBackgroundColor] = useState("#f0f0f0")
     const [correct, setCorrect] = useState(-1)
     const [buttonText, setButtonText] = useState("Kiểm tra")
-    
-    const answer = () => {
+    const [blur, setBlur] = useState(true)
+    const [disabledButton, setDisabledButton] = useState(false)
+
+    const answer = async () => {
+        removeblur()
         if(lose == 0){
+            setDisabledButton(true)
+            await failQuiz({ questionname, dataquiz })
             router.back()
+            return
+        }
+        if(done){
+            
+            // await endQuiz({questionname, arrayQuestionResult: dataquiz})
+            router.replace('containers/Congratulations')
             return
         }
         if(doneAnswer){
@@ -40,13 +63,17 @@ export default function QuizItem({ question, scrollTo, nextIndex, answerResult, 
                 setBackgroundColor(colorWrong)
                 setBbuttonBackgroundColor(colorWrong)
                 setTextColor("white")
+                dataquiz[index].correct = 0
+                
             }else{ // correcr answer
                 setCorrect(1)
                 answerResult(true)
                 setCountCorrect(countcorrect + 0.1)
                 setBackgroundColor(colorCorrect)
                 setTextColor("white")
+                dataquiz[index].correct = 1
             }
+            setDataQuiz(dataquiz)
             setDoneAnswer(true)
         }
 
@@ -57,7 +84,6 @@ export default function QuizItem({ question, scrollTo, nextIndex, answerResult, 
             setClickAnswer(index)
             setBbuttonBackgroundColor(tabbarcolor)
         }
-        
     }
 
     const renderAnswer = ({ item, index }) => {
@@ -103,31 +129,59 @@ export default function QuizItem({ question, scrollTo, nextIndex, answerResult, 
         )
     }
 
+    const removeblur = () => {
+        setBlur(false)
+    }
+
     useEffect(() => {
         if(lose == 0){
             setButtonText("Trở lại")
+        }else if(done){
+            setButtonText("Hoàn thành")
         }else if(doneAnswer){
             setButtonText("Tiếp tục")
         }
-    }, [lose, doneAnswer])
+    }, [lose, doneAnswer, done])
+
+    useEffect(() => {
+        setData(question)
+    }, [question])
 
     return (
         <View style={styles.container}>
             <View style={styles.bodycontainer}>
                 <View style={styles.subbodycontainer}>
                     <Text style={styles.question}>What is definition for this word?</Text>
-                    <View style={[styles.data, {backgroundColor: backgroundColor}]}>
-                        <Text style={[styles.datatext, {color: textColor}]}>{data.word}</Text>
-                    </View>
-
-                    <FlashList 
-                        data={data.answer}
-                        renderItem={({item, index}) => renderAnswer({item, index})}
-                        keyExtractor={(item) => item.toString()}
-                        estimatedItemSize={4}
-                        extraData={[clickAnswer, correct]}
-                        scrollEnabled={false}
-                    />
+                    {data.answer && data.answer.length > 0 ? (
+                        <>
+                        <View style={[styles.data, {backgroundColor: backgroundColor}]}>
+                            <Text style={[styles.datatext, {color: textColor}]}>{data.word}</Text>
+                            <TouchableOpacity style={styles.remindsentence} onPress={removeblur} >
+                                <Text style={[styles.blurtext, {color: textColor}]}>{data.remind_sentence}</Text>
+                                {data.remind_sentence && blur ? (
+                                    <BlurView
+                                        style={styles.absolute}
+                                        blurType="light"
+                                        blurAmount={4}
+                                        overlayColor=''
+                                        reducedTransparencyFallbackColor="white"
+                                    />
+                                ): ""}
+                                
+                            </TouchableOpacity>
+                        </View>
+                    
+                        <FlashList 
+                            data={data.answer}
+                            renderItem={({item, index}) => renderAnswer({item, index})}
+                            keyExtractor={(item) => item.toString()}
+                            estimatedItemSize={4}
+                            extraData={[clickAnswer, correct]}
+                            scrollEnabled={false}
+                        />
+                        </>
+                    ): null}
+                    
                 </View>
                 {lose == 0 ? (
                     <View style={styles.messageView}>
@@ -144,7 +198,7 @@ export default function QuizItem({ question, scrollTo, nextIndex, answerResult, 
                     borderWidth: clickAnswer != -1 || doneAnswer ? 0 : 1
                 }]} 
                     onPress={answer}
-                    disabled={clickAnswer == -1 && !doneAnswer ? true : false}
+                    disabled={(clickAnswer == -1 && !doneAnswer) || disabledButton ? true : false}
                 >
                     <Text style={[styles.buttontext, {
                         color: clickAnswer != -1 || doneAnswer ? "white" : "black",
@@ -198,7 +252,7 @@ const styles = StyleSheet.create({
         paddingVertical: windowHeight/10,
         borderRadius: 10,
         borderWidth: 3,
-        borderColor: inputbackgroundcolor
+        borderColor: inputbackgroundcolor,
     },
     datatext: {
         fontSize: scale(28),
@@ -228,5 +282,25 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: scale(14),
         fontWeight: "bold"
+    },
+    remindsentence: {
+        position: "absolute",
+        fontSize: 14,
+        bottom: 20,
+        height: "auto",
+        padding: 10,
+        alignSelf: "center",
+        marginHorizontal: 20,
+    },
+    blurtext:{
+        fontSize: 14,
+    },
+    absolute: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        borderRadius: 10
     }
 })

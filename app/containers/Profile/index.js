@@ -4,12 +4,26 @@ import * as SecureStore from 'expo-secure-store';
 import { router } from 'expo-router';
 import i18n from '../../i18n';
 import Language from '../Login/language';
+import FlashMessage from "react-native-flash-message";
+import { useRef } from 'react';
+import { scale } from 'react-native-size-matters';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Profile() {
+    const flashmessage = useRef()
+    
     const logout = () => {
-        SecureStore.deleteItemAsync("logindata")
-        SecureStore.deleteItemAsync("email")
+        AsyncStorage.clear()
+        // SecureStore.deleteItemAsync("logindata")
+        // SecureStore.deleteItemAsync("token")
         router.replace({pathname: "containers/Login", params: { logout: true }})
+    }
+
+    const showmessage = () => {
+        flashmessage.current.showMessage({
+            message: i18n.t('changelanguage'),
+            type: "success",
+        });
     }
 
     return (
@@ -18,16 +32,19 @@ export default function Profile() {
                 <Text style={styles.textinfo}>Duy Nguyen</Text>
                 <Text style={styles.subtextinfo}>nguyenduy7474@gmail.com</Text>
             </View>
-{/*             <TouchableOpacity style={styles.buttonadd}>
-                <Text style={styles.buttontext}>{i18n.t('preferences')}</Text>
-            </TouchableOpacity> */}
             <TouchableOpacity style={styles.buttonadd} onPress={logout}>
                 <Text style={styles.buttontext}>{i18n.t('logout')}</Text>
             </TouchableOpacity>
             <View style={styles.langview}>
-                <Language />
+                <Language showmessage={showmessage} />
             </View>
             <Text style={styles.subtextinfo}>{i18n.t('version')}: {pjson.version}</Text>
+            <FlashMessage 
+                ref={flashmessage} 
+                floating={true}
+                position="bottom"
+                icon="success"
+            />
         </View>
       );
 }

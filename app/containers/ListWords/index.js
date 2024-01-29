@@ -1,16 +1,17 @@
-import { Pressable, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useEffect, useState } from 'react';
+import { router } from 'expo-router';
+
 import StatusBarComponent from '../../components/StatusBar'
 import TopMenu from '../../components/TopMenu'
-import { tabbarcolor, themeColor2 } from '../../contants/style';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { meaningbackground, tabbarcolor, themeColor2 } from '../../contants/style';
 import ListWordsComponent from './listWords';
 import Search from './search';
-import { router } from 'expo-router';
-import { useState } from 'react';
 import i18n from '../../i18n';
 
-const TopComponent = ({ onChangeText }) => {
 
+const TopComponent = ({ onChangeText }) => {
 
     const addNewWord = () => {
         router.push("containers/AddWord")
@@ -29,6 +30,7 @@ const TopComponent = ({ onChangeText }) => {
 
 export default function ListWords() {
     const [searchtext, setSearchtext] = useState("")
+
     const onChangeText = (data) => {
         setSearchtext(data)
     }
@@ -45,7 +47,7 @@ export default function ListWords() {
 
 const styles = StyleSheet.create({
     buttonadd: {
-        backgroundColor: themeColor2,
+        backgroundColor: meaningbackground,
         width: "100%",
         marginTop: 10,
         alignItems: "center",

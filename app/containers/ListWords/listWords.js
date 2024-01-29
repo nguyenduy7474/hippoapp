@@ -1,11 +1,15 @@
 import { Pressable, Text, View, StyleSheet, TouchableOpacity, LayoutAnimation, UIManager, Platform} from 'react-native';
-import { tabbarcolor, themeColor3 } from '../../contants/style';
 import { FlashList } from "@shopify/flash-list";
-import { useEffect, useState, useRef } from 'react';
-import { router } from 'expo-router';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { router, useFocusEffect } from 'expo-router';
 import LottieView from 'lottie-react-native';
-import * as Device from 'expo-device';
 import { scale } from 'react-native-size-matters';
+import { useSelector } from 'react-redux';
+
+import { updateListWordSelector } from '../../redux/selector';
+import { getListWord } from '../../api';
+import { tabbarcolor, themeColor3 } from '../../contants/style';
+import checkSpecialCharacter from '../../utils/checkSpecialCharacter';
 
 if (
     Platform.OS === 'android' &&
@@ -13,24 +17,6 @@ if (
 ) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-
-const DATA = [
-    {
-        name: "a1",
-        word: "Test",
-        definition: "Thử nghiệmas das asd as das as das das  asd as as sa as as"
-    },
-    {
-        name: "a2",
-        word: "Computer",
-        definition: "Máy tính"
-    },
-    {
-        name: "a3",
-        word: "Phone",
-        definition: "Điện Thoại"
-    }
-];
 
 const renderItem = ({ name, word, definition, index }) => {
     const paddingNum = 5
@@ -51,14 +37,20 @@ const renderItem = ({ name, word, definition, index }) => {
     )
 }
 
-export default function ListWordsComponent({ searchtext}) {
-    const [dataword, setDataword] = useState(DATA)
+export default function ListWordsComponent({ searchtext }) {
+    const [dataWordSource, setDataWordSource] = useState([])
+    const [dataword, setDataword] = useState([])
     const list = useRef(null);
+    const updateListWord = useSelector(updateListWordSelector)
+
+    const getDataWord = async () => {
+        let listWord = await getListWord()
+        setDataWordSource(listWord.data)
+    }
 
     useEffect(() => {
-        var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/
-        if(!format.test(searchtext)){
-            let listSearch = DATA.filter(item => {
+        if(!checkSpecialCharacter(searchtext)){
+            let listSearch = dataWordSource.filter(item => {
                 let re = new RegExp(searchtext,"i");
                 if(re.test(item.word)){
                     return true
@@ -71,9 +63,14 @@ export default function ListWordsComponent({ searchtext}) {
             }
 
             setDataword(listSearch)
-
+        }else{
+            console.info("🚀 ~ chứa ký tự đặc biệt")
         }
-    }, [searchtext])
+    }, [searchtext, dataWordSource])
+
+    useEffect(() => {
+        getDataWord()
+    }, [updateListWord])
 
     return (
         <View style={styles.container}>
@@ -85,6 +82,9 @@ export default function ListWordsComponent({ searchtext}) {
                     numColumns={2}
                     keyExtractor={item => item.name}
                     ref={list}
+                    contentContainerStyle={{
+                        paddingBottom: 15
+                    }}
                 />
             ): (
                 <LottieView

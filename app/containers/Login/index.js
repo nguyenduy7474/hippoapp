@@ -1,30 +1,47 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Text, View, StyleSheet, StatusBar, ToastAndroid } from 'react-native';
-import { themeColor } from '../../contants/style';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Text, View, StyleSheet, StatusBar, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font';
-import ButtonLogin from '../../components/ButtonLogin';
 import { Image } from 'expo-image';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as SecureStore from 'expo-secure-store';
 import { router } from 'expo-router';
-import Language from './language';
-import i18n from '../../i18n';
 import Constants from 'expo-constants';
 import { LoginManager, AccessToken, Profile } from 'react-native-fbsdk-next';
 import * as Device from 'expo-device';
 import { scale } from 'react-native-size-matters';
+import FlashMessage from "react-native-flash-message";
+import LottieView from 'lottie-react-native';
+import {
+    GoogleSignin,
+    statusCodes,
+} from '@react-native-google-signin/google-signin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import loginFeature from '../../utils/login';
+import Language from './language';
+import i18n from '../../i18n';
+import ButtonLogin from '../../components/ButtonLogin';
+import { themeColor } from '../../contants/style';
+import { getProfile } from '../../api';
+
+GoogleSignin.configure({
+    webClientId: '1092421045056-e8tstal1oj7tqi9igsltipa58ja7p96f.apps.googleusercontent.com',
+    iosClientId: '1092421045056-k20ns6edr2mk3tu6ffnse4iensako8tt.apps.googleusercontent.com',
+  });
 
 const deviceos = Device.osName
 const statusBarHeight = Constants.statusBarHeight;
-
+const windowHeight = Dimensions.get('window').height;
 
 const Login = () => {
     const [iosLoginCheck, setIosLoginCheck] = useState(true)
     const [logined, setlogined] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [fontsLoaded] = useFonts({
         'commic': require('../../../assets/fonts/comicz.ttf'),
     });
+    const flashmessage = useRef()
 
     useEffect(() => {
         if (logined) {
@@ -32,33 +49,48 @@ const Login = () => {
         }
     }, [logined])
 
-    useCallback(async () => {
+    useEffect(() => {
         AppleAuthentication.isAvailableAsync().then((checkLoginAvailable) => {
             if (!checkLoginAvailable) {
                 setIosLoginCheck(false)
             }
         })
-    }, [fontsLoaded])
+    }, [])
 
     if (!fontsLoaded) {
         return null
     }
 
+    const showmessage = () => {
+        flashmessage.current.showMessage({
+            message: i18n.t('changelanguage'),
+            type: "success",
+        });
+    }
+
     const loginFacebook = () => {
+        setLoading(true)
         LoginManager.logInWithPermissions(["public_profile", "email"]).then(
             async function (result) {
-
+                
                 if (result.isCancelled) {
+                    setLoading(false)
                     console.log("Login cancelled");
                 } else {
+                    
+                    let typeLogin = "fb-login"
                     let dataToken = await AccessToken.getCurrentAccessToken()
-                    let dataProfile = await Profile.getCurrentProfile()
+                    let dataProfile = await getProfile(dataToken.accessToken)
                     var datasave = JSON.parse(JSON.stringify(dataProfile))
                     datasave.accessToken = dataToken.accessToken
-                    datasave.typeLogin = "fb-login"
+                    datasave.typeLogin = typeLogin
 
-                    SecureStore.setItemAsync("logindata", JSON.stringify(datasave))
-                    setlogined(true)
+                    AsyncStorage.setItem("logindata", JSON.stringify(datasave))
+                    let result = await loginFeature(datasave, typeLogin)
+                    if(result){
+                        setlogined(true)
+                    }
+                    
                 }
             },
             function (error) {
@@ -67,28 +99,64 @@ const Login = () => {
         );
     }
 
-    const loginGoogle = () => {
-        console.log("gg")
+    const loginGoogle = async () => {
+        try {
+            setLoading(true)
+            let typeLogin = "google-login"
+
+            const userInfo = await GoogleSignin.signIn()
+            var datasave = JSON.parse(JSON.stringify(userInfo))
+            datasave.accessToken = datasave.idToken
+            datasave.typeLogin = typeLogin
+            
+            AsyncStorage.setItem("logindata", JSON.stringify(datasave))
+            let result = await loginFeature(datasave, typeLogin)
+            if(result){
+                setlogined(true)
+            }
+        } catch (error) {
+            console.info("🚀 ~ file: index.js:118 ~ loginGoogle ~ error:", error)
+            setLoading(false)
+            switch (error.code) {
+            case statusCodes.NO_SAVED_CREDENTIAL_FOUND:
+                // no saved credential found, try creating an account
+                break;
+            case statusCodes.SIGN_IN_CANCELLED:
+                console.info("Không cấp quyền")
+                break;
+            case statusCodes.ONE_TAP_START_FAILED:
+                // Android and Web only, you probably have hit rate limiting. You can still call the original Google Sign In API in this case.
+                break;
+            default:
+            // something else happened
+            }
+        }
     }
 
     const loginApple = async () => {
+        setLoading(true)
         try {
-
-            const credential = await AppleAuthentication.signInAsync({
+            let typeLogin = "apple-login"
+            let credential = await AppleAuthentication.signInAsync({
                 requestedScopes: [
                     AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
                     AppleAuthentication.AppleAuthenticationScope.EMAIL,
                 ],
             });
-            console.info("🚀 ~ file: index.js:75 ~ loginApple ~ credential:", credential)
-            credential.typeLogin = "apple-login"
-            SecureStore.setItemAsync("logindata", JSON.stringify(credential))
-            setlogined(true)
+            var datasave = JSON.parse(JSON.stringify(credential))
+            datasave.typeLogin = typeLogin
+            
+            AsyncStorage.setItem("logindata", JSON.stringify(datasave))
+            let result = await loginFeature(datasave, typeLogin)
+            if(result){
+                setlogined(true)
+            }
             // signed in
         } catch (e) {
+            setLoading(false)
             if (e.code === 'ERR_REQUEST_CANCELED') {
                 console.info("Không cấp quyền")
-
+                
             } else {
                 // handle other errors
             }
@@ -131,20 +199,49 @@ const Login = () => {
                     backgroundcolor="#d0463b"
                     onPress={loginGoogle}
                 />
-                {iosLoginCheck ? (
-                    <ButtonLogin
-                        text={i18n.t('login_with_apple')}
-                        color="white"
-                        iconname="logo-apple"
-                        iconcolor="white"
-                        backgroundcolor="black"
-                        onPress={loginApple}
-                    />
-                ) : ""}
+                <ButtonLogin
+                    text={i18n.t('login_with_apple')}
+                    color="white"
+                    iconname="logo-apple"
+                    iconcolor="white"
+                    backgroundcolor="black"
+                    onPress={loginApple}
+                    disabled={!iosLoginCheck ? true : false}
+                />
             </View>
             <View style={styles.footer}>
-                <Language />
+                <Language 
+                    showmessage={showmessage}
+                />
             </View>
+            {loading ? (
+                <>
+                    <View style={styles.loading}>
+                    </View>
+                    <LottieView
+                        autoPlay={true}
+                        style={{
+                            width: scale(200),
+                            position: "absolute",
+                            zIndex: 10,
+                            alignSelf: "center",
+                            height: "100%"
+                        }}
+                        // Find more Lottie files at https://lottiefiles.com/featured
+                        source={require('../../../assets/lottie/loading.json')}
+                    />
+                </>
+            ): ""}
+
+            <FlashMessage 
+                ref={flashmessage} 
+                floating={true}
+                position="bottom"
+                icon="success"
+                style={{
+                    bottom: scale(50)
+                }}
+            />
         </LinearGradient>
     );
 }
@@ -192,6 +289,16 @@ const styles = StyleSheet.create({
         paddingBottom: deviceos == "Android" ? 10 : 20,
         backgroundColor: "white",
         paddingHorizontal: 10
+    },
+    loading: {
+        position: "absolute",
+        backgroundColor: "black",
+        width: "100%",
+        height: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        opacity: 0.5,
+        zIndex: 5
     }
 });
 

@@ -1,5 +1,5 @@
 import { View, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { themeColor } from '../contants/style';
+import { tabbarcolor, themeColor } from '../contants/style';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import i18n from '../i18n';
@@ -17,8 +17,8 @@ export default function DoneMenu({ onDelete }) {
             <TouchableOpacity onPress={goback}>
                 <Text style={styles.donetitle}>{i18n.t('back')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={goback}>
-                <Text style={styles.donetitle}>{onDelete ? <Ionicons name='trash-outline' size={32} color={"white"}/> : <Ionicons name='save-outline' size={32} color={"white"}/>}</Text>
+            <TouchableOpacity onPress={onDelete}>
+                <Text style={styles.donetitle}>{onDelete ? <Ionicons name='trash-outline' size={32} color={"white"}/> : ""}</Text>
             </TouchableOpacity>
         </View>
     );
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     container: {
         height: 50,
         width: "100%",
-        backgroundColor: themeColor,
+        backgroundColor: tabbarcolor,
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",

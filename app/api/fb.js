@@ -1,5 +1,4 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const checkTokenWork = (token) => {
     return new Promise((ok, notok) => {
@@ -13,12 +12,26 @@ const checkTokenWork = (token) => {
             }
         })
         .catch(function (error) {
-            console.info("🚀 ~ file: fb.js:12 ~ checkTokenWork ~ error:", error)
+            console.info("🚀 ~ file: fb.js:15 ~ returnnewPromise ~ error:", error.response.data)
+            ok(false)
         })
     })
+}
 
+const getProfile = (token) => {
+    return new Promise((ok, notok) => {
+        const urlCheck = `https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${token}`
+        axios.get(urlCheck)
+        .then(function (response) {
+            ok(response.data)
+        })
+        .catch(function (error) {
+            console.info("🚀 ~ file: fb.js:28 ~ returnnewPromise ~ error:", error)
+        })
+    })
 }
 
 export {
-    checkTokenWork
+    checkTokenWork,
+    getProfile
 }

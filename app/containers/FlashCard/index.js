@@ -33,7 +33,6 @@ export default function FlashCard() {
     }
 
     const answer = () => {
-        console.info("🚀 ~ file: index.js:13 ~ FlashCard ~ answers:", answers)
     }
 
     const removeblur = () => {

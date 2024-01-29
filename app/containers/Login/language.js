@@ -1,28 +1,23 @@
 import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import StatusBarComponent from '../../components/StatusBar'
 import TopMenu from '../../components/TopMenu';
-import { themeColor2 } from '../../contants/style';
+import { tabbarcolor, themeColor2 } from '../../contants/style';
 import { Image } from 'expo-image';
 import { useEffect, useRef, useState } from 'react';
 import { getLocales, getCalendars } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { scale } from 'react-native-size-matters';
-import FlashMessage from "react-native-flash-message";
-import i18n from '../../i18n';
 
 const vncode = "vn"
 
-export default function Language() {
+export default function Language({ showmessage }) {
     const [languagecode, setLanguagecode] = useState("")
-    const flashmessage = useRef(null)
 
     const changeLanguage = async (languagecode) => {
         setLanguagecode(languagecode)
         await AsyncStorage.setItem('languagecode', languagecode)
-        flashmessage.current.showMessage({
-            message: i18n.t('changelanguage'),
-            type: "success",
-        });
+        showmessage()
+
     }
 
     const loadLanguage = async(languagecode) => {
@@ -42,28 +37,20 @@ export default function Language() {
     return (
         <View style={styles.container}>
             <TouchableOpacity style={[styles.button, {
-                backgroundColor: languagecode == vncode ? themeColor2 : "white",
-                borderColor: languagecode == vncode ? "white" : themeColor2
+                backgroundColor: languagecode == vncode ? tabbarcolor : "white",
+                borderColor: languagecode == vncode ? "white" : tabbarcolor
             }]} onPress={() => changeLanguage("vn")}>
                 <Image source={require('../../../assets/images/vietnamflag.png')} style={styles.flag}/>
-                <Text style={[styles.buttontext, {color: languagecode == vncode ? "white" : themeColor2}]}>Tiếng việt</Text>
+                <Text style={[styles.buttontext, {color: languagecode == vncode ? "white" : tabbarcolor}]}>Tiếng việt</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.button, {
-                backgroundColor: languagecode != vncode ? themeColor2 : "white",
-                borderColor: languagecode != vncode ? "white" : themeColor2
+                backgroundColor: languagecode != vncode ? tabbarcolor : "white",
+                borderColor: languagecode != vncode ? "white" : tabbarcolor
             }]} onPress={() => changeLanguage("en")}>
                 <Image source={require('../../../assets/images/usaflag.png')} style={styles.flag}/>
-                <Text style={[styles.buttontext, {color: languagecode != vncode ? "white" : themeColor2 }]}>English</Text>
+                <Text style={[styles.buttontext, {color: languagecode != vncode ? "white" : tabbarcolor }]}>English</Text>
             </TouchableOpacity>
-            <FlashMessage 
-                ref={flashmessage} 
-                floating={true}
-                position="bottom"
-                icon="success"
-                style={{
-                    top: 40
-                }}
-            />
+
         </View>
       );
 }

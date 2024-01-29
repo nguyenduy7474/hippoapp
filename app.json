@@ -20,6 +20,13 @@
       "usesAppleSignIn": true,
       "config": {
         "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": ["com.googleusercontent.apps.1092421045056-k20ns6edr2mk3tu6ffnse4iensako8tt"]
+          }
+        ]
       }
     },
     "android": {
@@ -35,6 +42,7 @@
     "plugins": [
       "expo-router",
       "expo-apple-authentication",
+      "expo-localization",
       [
         "react-native-fbsdk-next",
         {
@@ -48,7 +56,12 @@
           "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
         }
       ],
-      "expo-localization"
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.1092421045056-k20ns6edr2mk3tu6ffnse4iensako8tt"
+        }
+      ]
     ],
     "scheme": "hippocampusvn",
     "extra": {

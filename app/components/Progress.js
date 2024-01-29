@@ -6,18 +6,25 @@ import * as Progress from 'react-native-progress';
 import { scale } from 'react-native-size-matters';
 const windowWidth = Dimensions.get('window').width;
 
-export default function ProgressHeader({ number = 0, progresspercent, heartnum = 3 }) {
+export default function ProgressHeader({ number = undefined, progresspercent, heartnum = 3, endQuiz, dayquestion = false, lose = -1 }) {
 
     const goBack = () => {
         router.back()
     }
 
+    const endQuizNow = async () => {
+        await endQuiz()
+        router.back()
+    }
+
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={goBack}>
-                <Image source={require('../../assets/images/close.png')} style={{ width: scale(20), height: scale(20)}}/>
-            </TouchableOpacity>
-            {!number ? (
+            {dayquestion ? (
+                <TouchableOpacity onPress={goBack}  disabled={lose == 0 ? true : false}>
+                    <Image source={require('../../assets/images/close.png')} style={{ width: scale(20), height: scale(20)}}/>
+                </TouchableOpacity>
+            ): null }
+            {dayquestion ? (
                 <Progress.Bar 
                     progress={progresspercent} 
                     width={windowWidth/1.6}
@@ -30,11 +37,17 @@ export default function ProgressHeader({ number = 0, progresspercent, heartnum =
             ): (
                 <Text style={styles.point}>{number}</Text>
             )}
-
-            <View style={styles.heart}>
-                <Text style={styles.heattext}>{heartnum}</Text>
-                <Image source={require('../../assets/images/heart.png')} style={{ width: scale(20), height: scale(20)}}/>
-            </View>
+            {dayquestion ? (
+                <View style={styles.heart}>
+                    <Text style={styles.heattext}>{heartnum}</Text>
+                    <Image source={require('../../assets/images/heart.png')} style={{ width: scale(20), height: scale(20)}}/>
+                </View>
+            ): (
+                <TouchableOpacity onPress={endQuizNow} style={styles.buttonDone}>
+                    <Text style={{ color: "white", fontWeight: "bold"}}>Kết thúc</Text>
+                </TouchableOpacity>
+            )}
+            
         </View>
     );
 }
@@ -70,5 +83,10 @@ const styles = StyleSheet.create({
         fontSize: 25,
         fontWeight: "bold",
         color: tabbarcolor
+    },
+    buttonDone:{
+        backgroundColor: tabbarcolor,
+        padding: 5,
+        borderRadius:5
     }
 })

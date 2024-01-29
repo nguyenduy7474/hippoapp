@@ -22,7 +22,8 @@
       "ios": {
         "credentialsSource": "local",
         "image": "latest",
-        "distribution": "internal"
+        "distribution": "internal",
+        "enterpriseProvisioning": "universal"
       }
     },
     "preview2": {
