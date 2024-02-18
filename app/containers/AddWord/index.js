@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, TextInput, View, TouchableOpacity, Dimensions } from 'react-native';
+import { Platform, StyleSheet, Text, TextInput, View, TouchableOpacity, Dimensions } from 'react-native';
 import Constants from 'expo-constants';
 import { router, useLocalSearchParams } from 'expo-router';
 import FlashMessage from "react-native-flash-message";
@@ -132,18 +132,22 @@ export default function AddWord() {
                     value={remindSentence}
                     placeholder={i18n.t('sentence')}
                 />
-                <FlashMessage 
-                    ref={flashmessage} 
-                    floating={true}
-                    position="bottom"
-                    icon="success"
-                    style={{
-                        bottom: scale(70)
-                    }}
-                />
-                <TouchableOpacity style={styles.buttonadd} onPress={saveWord}>
-                    <Text style={styles.buttontext}>{i18n.t('save')}</Text>
-                </TouchableOpacity>
+                <View style={{ bottom: scale(50), position: "absolute", width:"100%" }}>
+                    <FlashMessage 
+                        ref={flashmessage} 
+                        floating={true}
+                        position="bottom"
+                        icon="success"
+                        style={{
+                            bottom: Platform.OS === 'android' ? scale(50) : scale(20),
+                            width: "100%",
+                            alignSelf: "center"
+                        }}
+                    />
+                    <TouchableOpacity style={styles.buttonadd} onPress={saveWord}>
+                        <Text style={styles.buttontext}>{i18n.t('save')}</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
             <Modal isVisible={isVisibleModal}>
                 {loading ? (
@@ -237,8 +241,8 @@ const styles = StyleSheet.create({
         paddingVertical: 18,
         alignSelf: "center",
         borderRadius: 10,
-        position: "absolute",
-        bottom: scale(50)
+        // position: "absolute",
+        // bottom: scale(50)
     },
     buttontext: {
         color: "white",

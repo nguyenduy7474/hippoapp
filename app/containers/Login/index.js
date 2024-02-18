@@ -26,8 +26,8 @@ import { themeColor } from '../../contants/style';
 import { getProfile } from '../../api';
 
 GoogleSignin.configure({
-    webClientId: '1092421045056-e8tstal1oj7tqi9igsltipa58ja7p96f.apps.googleusercontent.com',
-    iosClientId: '1092421045056-k20ns6edr2mk3tu6ffnse4iensako8tt.apps.googleusercontent.com',
+    webClientId: '912000429184-81pu3kl9ahb3g74r6nga88011oe2sdjh.apps.googleusercontent.com',
+    iosClientId: '912000429184-qvldcep1aa6e6aak76sp2truv2cvp60t.apps.googleusercontent.com',
   });
 
 const deviceos = Device.osName
@@ -42,6 +42,7 @@ const Login = () => {
         'commic': require('../../../assets/fonts/comicz.ttf'),
     });
     const flashmessage = useRef()
+    const [loaded, setLoaded] = useState(false)
 
     useEffect(() => {
         if (logined) {
@@ -55,6 +56,11 @@ const Login = () => {
                 setIosLoginCheck(false)
             }
         })
+        i18n.onChange(() => {
+            if(i18n.t('login_with_fb').indexOf("[missing") == -1){
+                setLoaded(true)
+            }
+        });
     }, [])
 
     if (!fontsLoaded) {
@@ -104,18 +110,22 @@ const Login = () => {
             setLoading(true)
             let typeLogin = "google-login"
 
-            const userInfo = await GoogleSignin.signIn()
+            let userInfo = await GoogleSignin.signIn()
+            if(!userInfo.accessToken){
+                userInfo = await GoogleSignin.getCurrentUser();
+            }
             var datasave = JSON.parse(JSON.stringify(userInfo))
             datasave.accessToken = datasave.idToken
             datasave.typeLogin = typeLogin
             
             AsyncStorage.setItem("logindata", JSON.stringify(datasave))
             let result = await loginFeature(datasave, typeLogin)
+            console.info("🚀 ~ file: index.js:123 ~ loginGoogle ~ result:", result)
             if(result){
                 setlogined(true)
             }
         } catch (error) {
-            console.info("🚀 ~ file: index.js:118 ~ loginGoogle ~ error:", error)
+            console.info("🚀 ~ file: index.js:126 ~ loginGoogle ~ error:", error)
             setLoading(false)
             switch (error.code) {
             case statusCodes.NO_SAVED_CREDENTIAL_FOUND:
@@ -172,43 +182,51 @@ const Login = () => {
             <StatusBar
                 barStyle="light-content"
             />
-            <View style={styles.toppart}>
-                <Image
-                    style={styles.image}
-                    source={require('../../../assets/images/logo.jpeg')}
-                    contentFit="contain"
-                    transition={500}
-                />
-                <Text style={styles.title}>{i18n.t('welcome')}!</Text>
-            </View>
-            <View style={styles.bottompart}>
-                <Text style={styles.quote}>"{i18n.t('quoteopenapp')}"</Text>
-                <ButtonLogin
-                    text={i18n.t('login_with_fb')}
-                    color="white"
-                    iconname="logo-facebook"
-                    iconcolor="white"
-                    backgroundcolor="#31519a"
-                    onPress={loginFacebook}
-                />
-                <ButtonLogin
-                    text={i18n.t('login_with_google')}
-                    color="white"
-                    iconname="logo-google"
-                    iconcolor="white"
-                    backgroundcolor="#d0463b"
-                    onPress={loginGoogle}
-                />
-                <ButtonLogin
-                    text={i18n.t('login_with_apple')}
-                    color="white"
-                    iconname="logo-apple"
-                    iconcolor="white"
-                    backgroundcolor="black"
-                    onPress={loginApple}
-                    disabled={!iosLoginCheck ? true : false}
-                />
-            </View>
+            {loaded || i18n.t('login_with_fb').indexOf("[missing") == -1 ? (
+                <>
+                    <View style={styles.toppart}>
+                        <Image
+                            style={styles.image}
+                            source={require('../../../assets/images/logo.jpeg')}
+                            contentFit="contain"
+                            transition={500}
+                        />
+                        <Text style={styles.title}>{i18n.t('welcome')}!</Text>
+                    </View>
+                    <View style={styles.bottompart}>
+                        <Text style={styles.quote}>"{i18n.t('quoteopenapp')}"</Text>
+                        <ButtonLogin
+                            text={i18n.t('login_with_fb')}
+                            color="white"
+                            iconname="logo-facebook"
+                            iconcolor="white"
+                            backgroundcolor="#31519a"
+                            onPress={loginFacebook}
+                        />
+                        <ButtonLogin
+                            text={i18n.t('login_with_google')}
+                            color="white"
+                            iconname="logo-google"
+                            iconcolor="white"
+                            backgroundcolor="#d0463b"
+                            onPress={loginGoogle}
+                        />
+                        <ButtonLogin
+                            text={i18n.t('login_with_apple')}
+                            color="white"
+                            iconname="logo-apple"
+                            iconcolor="white"
+                            backgroundcolor="black"
+                            onPress={loginApple}
+                            disabled={!iosLoginCheck ? true : false}
+                        />
+                    </View>
+                </>
+            ): (
+                <View style={{ flex: 1, backgroundColor: "white"}}>
+                </View>
+            )}
+
             <View style={styles.footer}>
                 <Language 
                     showmessage={showmessage}

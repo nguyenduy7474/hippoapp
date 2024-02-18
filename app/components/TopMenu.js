@@ -1,12 +1,17 @@
-import { View, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StatusBar, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { tabbarcolor, themeColor } from '../contants/style';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 
-export default function TopMenu() {
+export default function TopMenu({ signed = true }) {
 
     const onPressProfile = () => {
-        router.push('containers/Profile')
+        if(signed){
+            router.push('containers/Profile')
+        }else{
+            router.replace('/containers/Login');
+        }
+        
     }
 
     return (

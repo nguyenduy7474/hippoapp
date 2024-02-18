@@ -63,9 +63,7 @@ export default function Schedule() {
     }
 
     const dateWeekCheck = async () => {
-        let lang = await AsyncStorage.getItem('languagecode')
         let dataSchedule = await getSchedule()
-        
         setDateofweek(JSON.parse(dataSchedule.data.weekday))
     }
 
@@ -73,7 +71,6 @@ export default function Schedule() {
         if(dateofweek.length == 0){
             return
         }
-        console.info("🚀 ~ file: index.js:78 ~ useEffect ~ enabledNoti:", enabledNoti)
 
         if (!enabledNoti) {
             setShowstart(false)
@@ -87,7 +84,6 @@ export default function Schedule() {
             "weekday": JSON.stringify(dateofweek)
         }
         updateSchedule(datasend)
-        console.info("🚀 ~ file: index.js:76 ~ useEffect ~ datasend:", datasend)
 
     }, [enabledNoti, startTime, endTime, updatenoti])
 
@@ -177,7 +173,7 @@ export default function Schedule() {
 
                             </View>
                         </View>
-                        <View style={[styles.timeRow, { borderTopColor: "#fff0f0", borderTopWidth: 1 }]}>
+{/*                         <View style={[styles.timeRow, { borderTopColor: "#fff0f0", borderTopWidth: 1 }]}>
                             <View style={[styles.textBox, , { width: scale(200) }]}>
                                 <Text style={styles.timeText}>{i18n.t('sound')}</Text>
                             </View>
@@ -187,7 +183,7 @@ export default function Schedule() {
                             >
                                 <Text style={[styles.timeText]}>Hippo</Text>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                     </View>
                 </View>
             ) : ""}

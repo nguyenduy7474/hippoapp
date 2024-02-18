@@ -24,17 +24,21 @@
       "infoPlist": {
         "CFBundleURLTypes": [
           {
-            "CFBundleURLSchemes": ["com.googleusercontent.apps.1092421045056-k20ns6edr2mk3tu6ffnse4iensako8tt"]
+            "CFBundleURLSchemes": [
+              "com.googleusercontent.apps.912000429184-qvldcep1aa6e6aak76sp2truv2cvp60t"
+            ]
           }
         ]
-      }
+      },
+      "buildNumber": "7"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.hippocampusvn"
+      "package": "com.hippocampusvn",
+      "googleServicesFile": "./google_services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -52,14 +56,13 @@
           "scheme": "fb245918734979137",
           "advertiserIDCollectionEnabled": false,
           "autoLogAppEventsEnabled": false,
-          "isAutoInitEnabled": true,
-          "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+          "iosUserTrackingPermission": false
         }
       ],
       [
         "@react-native-google-signin/google-signin",
         {
-          "iosUrlScheme": "com.googleusercontent.apps.1092421045056-k20ns6edr2mk3tu6ffnse4iensako8tt"
+          "iosUrlScheme": "com.googleusercontent.apps.912000429184-qvldcep1aa6e6aak76sp2truv2cvp60t"
         }
       ]
     ],

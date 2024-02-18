@@ -39,10 +39,15 @@
       "distribution": "internal"
     },
     "production": {
-      "ios": {
-        "credentialsSource": "local",
-        "image": "latest",
-        "distribution": "internal"
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {
+      "ios":{
+        "appleId": "nguyenduy7474@gmail.com",
+        "ascAppId": "6473771467",
+        "appleTeamId": "5Z6X7Z6244"
       }
     }
   }

@@ -1,9 +1,10 @@
-import { View, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { View, StatusBar, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { themeColor, tabbarcolor, subtextcolor } from '../contants/style';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import * as Progress from 'react-native-progress';
 import { scale } from 'react-native-size-matters';
+import i18n from '../i18n';
 const windowWidth = Dimensions.get('window').width;
 
 export default function ProgressHeader({ number = undefined, progresspercent, heartnum = 3, endQuiz, dayquestion = false, lose = -1 }) {
@@ -14,7 +15,7 @@ export default function ProgressHeader({ number = undefined, progresspercent, he
 
     const endQuizNow = async () => {
         await endQuiz()
-        router.back()
+        // router.back()
     }
 
     return (
@@ -44,7 +45,7 @@ export default function ProgressHeader({ number = undefined, progresspercent, he
                 </View>
             ): (
                 <TouchableOpacity onPress={endQuizNow} style={styles.buttonDone}>
-                    <Text style={{ color: "white", fontWeight: "bold"}}>Kết thúc</Text>
+                    <Text style={{ color: "white", fontWeight: "bold"}}>{i18n.t("end_early")}</Text>
                 </TouchableOpacity>
             )}
             

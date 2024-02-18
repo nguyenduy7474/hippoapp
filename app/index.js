@@ -4,21 +4,32 @@ import { router } from 'expo-router';
 import HomePage from "./containers/Home";
 import { NavigationContainer } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
+import ListWords from "./containers/ListWords";
 
 export default function ContainerPage() {
+  const [signed, setSigned] = useState(false)
+
   useLayoutEffect(() => {
     CheckLogin().then((check) => {
-      if(!check){
+      if(check){
+        setSigned(true)
+      }
+/*       if(!check){
         router.replace('/containers/Login');
         return
-      }
+      } */
     })
   }, [])
 
 
   return (
     <NavigationContainer independent={true}>
-      <HomePage />
+      {signed ? (
+        <HomePage />
+      ): (
+        <ListWords signed={false}/>
+      )}
+      
     </NavigationContainer>
   );
 }

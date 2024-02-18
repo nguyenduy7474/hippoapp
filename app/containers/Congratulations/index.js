@@ -10,14 +10,10 @@ import { tabbarcolor } from '../../contants/style';
 const windowHeight = Dimensions.get('window').height;
 
 export default function Congratulations({ searchtext }) {
-    const [dataWordSource, setDataWordSource] = useState([])
-    const [dataword, setDataword] = useState([])
-    const list = useRef(null);
-    const { task_day } = useLocalSearchParams();
+    const { task_today, correct, wrong } = useLocalSearchParams()
 
     const endquiz = () => {
         router.replace('/containers/Home')
-        console.info("🚀 ~ file: index.js:19 ~ endquiz ~ endquiz:")
     }
 
     return (
@@ -31,7 +27,12 @@ export default function Congratulations({ searchtext }) {
                 source={require('../../../assets/lottie/congratulation.json')}
             />
             <Text style={styles.congratulation}>{i18n.t('congratulation')}</Text>
-            <Text style={styles.congratulationsub}>{i18n.t('donetaskday')}</Text>
+            { task_today != 0 ? (
+                <Text style={styles.congratulationsub}>{i18n.t('donetaskday')}</Text>
+            ): (
+                <Text style={styles.congratulationsub}>{i18n.t('endquiz', { correct_count: correct })}</Text>
+            )}
+            
 
             <TouchableOpacity style={styles.buttonadd} onPress={endquiz}>
                 <Text style={styles.buttontext}>{i18n.t('done')}</Text>

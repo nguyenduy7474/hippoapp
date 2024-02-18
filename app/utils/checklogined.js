@@ -73,7 +73,6 @@ const clearData = () => {
 
 const checkTokenUseableFeature = async () => {
     let tokenOcrm = await AsyncStorage.getItem("token")
-    console.info("🚀 ~ checkTokenUseableFeature ~ tokenOcrm:", tokenOcrm)
     if(tokenOcrm){
         let check = await checkTokenUseable(tokenOcrm)
         if(check.success){

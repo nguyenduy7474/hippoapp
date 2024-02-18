@@ -1,13 +1,16 @@
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { tabbarcolor, themeColor } from './contants/style';
 import i18n from './i18n';
 import store from "./redux/store";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
+
+import { saveQuestiosQuiz } from './redux/action';
+import { getQuestionsQuiz } from './api';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -46,8 +49,10 @@ async function registerForPushNotificationsAsync() {
     } else {
       alert('Must use physical device for Push Notifications');
     }
-  
-    return token.data;
+    if(token){
+      return token.data;
+    }
+    return ""
   }
 
 export default function Layout() {
@@ -56,22 +61,24 @@ export default function Layout() {
     const notificationListener = useRef();
     const responseListener = useRef();
   
-/*     useEffect(() => {
+    useEffect(() => {
       registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
   
       notificationListener.current = Notifications.addNotificationReceivedListener(notification => {  
         setNotification(notification);
       });
   
-      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-        console.info("🚀 ~ file: _layout.js:70 ~ useEffect ~ response:", response.notification.request.content.data)
+      responseListener.current = Notifications.addNotificationResponseReceivedListener(async (response) => {
+        if(response.notification.request.content.data.quiz){
+          router.push('containers/Quiz')
+        }
       });
-  
+      
       return () => {
         Notifications.removeNotificationSubscription(notificationListener.current);
         Notifications.removeNotificationSubscription(responseListener.current);
       };
-    }, []); */
+    }, []);
 
     return (
         <Provider store={store}>
@@ -85,6 +92,7 @@ export default function Layout() {
                     fontWeight: "bold"
                 }
             }}>
+                <Stack.Screen name="containers/ListWords/index" options={{headerShown: false}}/>
                 <Stack.Screen name="containers/Login/index" options={{headerShown: false}}/>
                 <Stack.Screen name="containers/Home/index" options={{headerShown: false}}/>
                 <Stack.Screen name="containers/Congratulations/index" options={{headerShown: false}}/>
@@ -105,7 +113,8 @@ export default function Layout() {
                 <Stack.Screen name="containers/Profile/index" options={{
                         headerTitle: i18n.t('settings'),
                         gestureDirection: "horizontal",
-                        gestureEnabled: true
+                        gestureEnabled: true,
+                        headerShown: false
                     }} 
                 />
                 <Stack.Screen name="containers/AddWord/index" options={{

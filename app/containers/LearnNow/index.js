@@ -16,8 +16,8 @@ export default function LearnNow() {
     }
 
     const quizLearn = async () => {
-        let dataQuiz = await getQuestionsQuiz()
-        dispatch(saveQuestiosQuiz(dataQuiz))
+        // let dataQuiz = await getQuestionsQuiz()
+        // dispatch(saveQuestiosQuiz(dataQuiz))
         router.push('containers/Quiz')
     }
     

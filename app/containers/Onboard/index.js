@@ -5,14 +5,16 @@ import Lottie from 'lottie-react-native';
 import i18n from '../../i18n';
 import { scale } from 'react-native-size-matters';
 import { router } from 'expo-router';
-import { updateFirstSigned } from '../../api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {width, height} = Dimensions.get('window');
 
 export default function OnboardingScreen() {
+
     const toHome = async () => {
-        await updateFirstSigned()
-        router.push({ pathname: "containers/Home", params: { signed: 1 } });
+        // await updateFirstSigned()
+        await AsyncStorage.setItem("hasopen", "true")
+        router.replace("/containers/Login");
     }
 
     const Skip = ({ isLight, skipLabel, ...props }) => (

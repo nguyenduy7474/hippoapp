@@ -1,10 +1,6 @@
 const checkSpecialCharacter = (string) => {
-    var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/
-    if(!format.test(string)){
-        return false
-    }else{
-        return true
-    }
+    const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+    return specialChars.test(string);
 }
 
 export default checkSpecialCharacter

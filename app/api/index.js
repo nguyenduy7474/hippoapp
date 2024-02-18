@@ -1,5 +1,19 @@
 import { checkTokenWork, getProfile } from "./fb";
-import { loginCrm, updateWord, getListWord, getWord, deleteWord, getQuestionsQuiz, updateSchedule, getSchedule, endQuiz, checkfirsttime, updateFirstSigned, failQuiz } from "./ocrm";
+import {
+    loginCrm, 
+    updateWord, 
+    getListWord, 
+    getWord, 
+    deleteWord, 
+    getQuestionsQuiz, 
+    updateSchedule, 
+    getSchedule, 
+    endQuiz, 
+    checkfirsttime, 
+    updateFirstSigned,
+    getTranslateJson,
+    deleteUser
+} from "./ocrm";
 import { checkTokenWorkGG } from "./google";
 
 export {
@@ -14,8 +28,9 @@ export {
     getQuestionsQuiz,
     updateSchedule,
     getSchedule,
-    endQuiz,
     checkfirsttime,
     updateFirstSigned,
-    failQuiz
+    endQuiz,
+    getTranslateJson,
+    deleteUser
 }

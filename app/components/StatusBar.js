@@ -1,4 +1,4 @@
-import { View, SafeAreaView, StatusBar } from 'react-native';
+import { View, StatusBar } from 'react-native';
 import { tabbarcolor, themeColor } from '../contants/style';
 import Constants from 'expo-constants';
 const statusBarHeight = Constants.statusBarHeight;

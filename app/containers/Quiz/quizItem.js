@@ -3,11 +3,12 @@ import { inputbackgroundcolor, tabbarcolor, colorWrong } from '../../contants/st
 import Constants from 'expo-constants';
 import { FlashList } from '@shopify/flash-list';
 import { scale } from 'react-native-size-matters';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { BlurView } from "@react-native-community/blur";
-import { endQuiz, failQuiz } from '../../api';
+import { endQuiz } from '../../api';
+import i18n from '../../i18n';
 
 
 const statusBarHeight = Constants.statusBarHeight;
@@ -36,7 +37,7 @@ export default function QuizItem({
     const [data, setData] = useState({})
     const [buttonBackgroundColor, setBbuttonBackgroundColor] = useState("#f0f0f0")
     const [correct, setCorrect] = useState(-1)
-    const [buttonText, setButtonText] = useState("Kiểm tra")
+    const [buttonText, setButtonText] = useState("check")
     const [blur, setBlur] = useState(true)
     const [disabledButton, setDisabledButton] = useState(false)
 
@@ -44,14 +45,26 @@ export default function QuizItem({
         removeblur()
         if(lose == 0){
             setDisabledButton(true)
-            await failQuiz({ questionname, dataquiz })
+            await endQuiz({ questionname, dataquiz })
             router.back()
             return
         }
         if(done){
-            
-            // await endQuiz({questionname, arrayQuestionResult: dataquiz})
-            router.replace('containers/Congratulations')
+            let res = await endQuiz({ questionname, dataquiz, done: 1})
+            let correct = dataquiz.filter(item => item.correct == 1)
+            let wrong = dataquiz.filter(item => item.correct == 0)
+            if(correct.length > 0){
+                router.replace({ 
+                    pathname: "containers/Congratulations", 
+                    params: { 
+                        task_today: res.data.task_today, 
+                        correct: correct.length, 
+                        wrong: wrong.length 
+                    } 
+                });
+            }else{
+                router.back()
+            }
             return
         }
         if(doneAnswer){
@@ -108,12 +121,14 @@ export default function QuizItem({
         }
 
         return (
-            <TouchableOpacity style={[styles.itemAnswer, {
-                backgroundColor: color ? color : "white",
-                borderColor: bordercolor,
-            }]}
+            <TouchableOpacity 
+                style={[styles.itemAnswer, {
+                    backgroundColor: color ? color : "white",
+                    borderColor: bordercolor,
+                }]}
                 onPress={() => chooseAnswer(index)}
                 disabled={ doneAnswer ? true : false}
+                key={item}
             >
                 <Text style={[styles.textanswer, {
                     color: colortext,
@@ -135,11 +150,11 @@ export default function QuizItem({
 
     useEffect(() => {
         if(lose == 0){
-            setButtonText("Trở lại")
+            setButtonText("go_back")
         }else if(done){
-            setButtonText("Hoàn thành")
+            setButtonText("end_early")
         }else if(doneAnswer){
-            setButtonText("Tiếp tục")
+            setButtonText("next")
         }
     }, [lose, doneAnswer, done])
 
@@ -151,7 +166,7 @@ export default function QuizItem({
         <View style={styles.container}>
             <View style={styles.bodycontainer}>
                 <View style={styles.subbodycontainer}>
-                    <Text style={styles.question}>What is definition for this word?</Text>
+                    <Text style={styles.question}>{i18n.t('what_definition')}</Text>
                     {data.answer && data.answer.length > 0 ? (
                         <>
                         <View style={[styles.data, {backgroundColor: backgroundColor}]}>
@@ -170,23 +185,23 @@ export default function QuizItem({
                                 
                             </TouchableOpacity>
                         </View>
-                    
-                        <FlashList 
+                        {data.answer.map((item, index) => renderAnswer({item, index}))}
+{/*                         <FlashList 
                             data={data.answer}
                             renderItem={({item, index}) => renderAnswer({item, index})}
                             keyExtractor={(item) => item.toString()}
                             estimatedItemSize={4}
                             extraData={[clickAnswer, correct]}
                             scrollEnabled={false}
-                        />
+                        /> */}
                         </>
                     ): null}
                     
                 </View>
                 {lose == 0 ? (
                     <View style={styles.messageView}>
-                        <Text style={styles.messageText}>You lose this time!</Text>
-                        <Text style={styles.messageText}>Take a deep breath! You can do this again.</Text>    
+                        <Text style={styles.messageText}>{i18n.t('lose_this_time')}</Text>
+                        <Text style={styles.messageText}>{i18n.t('take_deep_breath')}</Text>    
                     </View>
                 ) : ""}
 
@@ -202,7 +217,7 @@ export default function QuizItem({
                 >
                     <Text style={[styles.buttontext, {
                         color: clickAnswer != -1 || doneAnswer ? "white" : "black",
-                    }]}>{ buttonText }</Text>
+                    }]}>{i18n.t(buttonText)}</Text>
                 </TouchableOpacity>
             </View>
 

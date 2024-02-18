@@ -1,5 +1,6 @@
 const initState = {
-    updateListWord: 1
+    updateListWord: 1,
+    firsttimeopen: true
 }
 
 const rootReducer = (state = initState, action) => {
@@ -13,6 +14,16 @@ const rootReducer = (state = initState, action) => {
             return{
                 ...state,
                 questionquiz: action.payload
+            }
+        case "profile/saveUserInfor":
+            return{
+                ...state,
+                userinfor: action.payload
+            }
+        case "profile/checkFirstTimeOpenApp":
+            return{
+                ...state,
+                firsttimeopen: action.payload
             }
         default:
             return state

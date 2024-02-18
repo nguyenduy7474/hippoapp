@@ -11,3 +11,17 @@ export const saveQuestiosQuiz = (data) => {
         payload: data
     }
 }
+
+export const saveUserInfor = (data) => {
+    return {
+        type: "profile/saveUserInfor",
+        payload: data
+    }
+}
+
+export const checkFirstTimeOpenApp = (data) => {
+    return {
+        type: "profile/checkFirstTimeOpenApp",
+        payload: data
+    }
+}

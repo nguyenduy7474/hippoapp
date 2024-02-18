@@ -45,7 +45,7 @@
     "shortFriday": "F",
     "shortSaturday": "S",
     "done": "Done",
-    "congratulation": "Congratulation!",
+    "congratulation": "Congratulations!",
     "donetaskday": "You completed task today, be proud of yourself",
     "skip": "Skip",
     "next": "Next",
@@ -57,5 +57,12 @@
     "learning_system_onboard": "Liebig's Law of the Minimum",
     "learning_system_onboard_sub": "Algorithm helps you remember the vocabulary you often forget",
     "dontquit_onboard": "Keep Moving Forward",
-    "dontquit_onboard_sub": "Just learn a little everyday and you can go to moon"
+    "dontquit_onboard_sub": "Just learn a little every day and you can go to the moon",
+    "endquiz": "You answer correct new {{correct_count}} questions today",
+    "what_definition": "What is definition for this word?",
+    "lose_this_time": "You lose this time!",
+    "take_deep_breath": "Take a deep breath! You can do this again.",
+    "end_early": "Done",
+    "check": "Check",
+    "add_vocabulary": "Please add vocabulary to learn"
 }

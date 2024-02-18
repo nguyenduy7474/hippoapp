@@ -23,7 +23,12 @@ export default function Language({ showmessage }) {
     const loadLanguage = async(languagecode) => {
         const value = await AsyncStorage.getItem('languagecode');
         if(!value){
-            setLanguagecode(getLocales()[0].regionCode.toLowerCase())
+            if(getLocales()[0].languageCode.toLowerCase() == "vi"){
+                setLanguagecode("vn")
+            }else{
+                setLanguagecode(getLocales()[0].languageCode.toLowerCase())
+            }
+            
         }else{
             setLanguagecode(value)
         }

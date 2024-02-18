@@ -46,7 +46,7 @@
     "shortSaturday": "T7",
     "done": "Xong",
     "congratulation": "Chúc mừng!",
-    "donetaskday": "Bạn hoàn thành nhiệm vụ hôm nay rồi, hãy tự hào về bản thân mình đê",
+    "donetaskday": "Bạn hoàn thành nhiệm vụ hôm nay rồi, hãy tự hào về bản thân mình nha",
     "skip": "Bỏ qua",
     "next": "Tiếp tục",
     "greeting": "Chào mừng bạn đến với Hoitto",
@@ -57,5 +57,12 @@
     "learning_system_onboard": "Nguyên lý thùng gỗ",
     "learning_system_onboard_sub": "Thuật toán sẽ giúp bạn ghi nhớ những từ vựng mà bạn hay quên nhất",
     "dontquit_onboard": "Hãy luôn tiến về phía trước",
-    "dontquit_onboard_sub": "Chỉ cần cố gắng một ít mỗi ngày bạn sẽ thỉnh được chân kinh"
+    "dontquit_onboard_sub": "Chỉ cần cố gắng một ít mỗi ngày bạn sẽ thỉnh được chân kinh",
+    "endquiz": "Chúc mừng bạn trả lời đúng thêm {{correct_count}} câu hỏi hôm nay",
+    "what_definition": "Hãy chọn đĩnh nghĩa từ vựng này?",
+    "lose_this_time": "Gục ngã!",
+    "take_deep_breath": "Hít một hơi thật sâu! Làm lại lần nữa nào.",
+    "end_early": "Hoàn Thành",
+    "check": "Kiểm tra",
+    "add_vocabulary": "Thêm từ vựng để học nha"
 }
