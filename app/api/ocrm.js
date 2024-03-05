@@ -5,16 +5,17 @@ import * as Notifications from 'expo-notifications';
 import { getLocales } from 'expo-localization';
 
 // const serverUrl = "http://124.158.10.32:1999"
-const serverUrl = "https://bravo.oshima.vn/sendrequestapp"
-const ocrmUrl = "https://ocrmv3.oshima.vn"
+const serverUrl = "https://node.hoitto.online"
+const ocrmUrl = "https://hoitto.online"
 let headers = {
     "Content-Type": "application/json"
 }
 
 const loginCrm = ({ email, userid, firstname }) => {
     return new Promise((ok, notok) => {
-        const path = `/getusertoken`
-        axios.post(serverUrl, { path, email, userid, firstname })
+        const url = `${serverUrl}/getusertoken`
+        const data = { email, userid, firstname }
+        axios.post(url, data)
         .then(function (response) {
             ok(response.data)
         })
@@ -24,10 +25,30 @@ const loginCrm = ({ email, userid, firstname }) => {
     })
 }
 
+const logOut = () => {
+    return new Promise(async (ok, notok) => {
+        const url = `${ocrmUrl}/api/method/logout`
+        let token = await AsyncStorage.getItem("token")
+        headers.Authorization = token
+
+        axios.get(url, { headers })
+        .then(function (response) {
+            ok(response.data)
+        })
+        .catch(function (error) {
+            console.info("🚀 ~ file: ocrm.js:42 ~ returnnewPromise ~ error:", error.response.data)
+        })
+    })
+}
+
 const getUserInfo = () => {
     return new Promise(async (ok, notok) => {
         const url = `${ocrmUrl}/api/method/getuserinfor`
         let token = await AsyncStorage.getItem("token")
+        if(!token){
+            ok(false)
+            return
+        }
         headers.Authorization = token
 
         axios.get(url, { headers })
@@ -35,15 +56,16 @@ const getUserInfo = () => {
             ok(response.data.data)
         })
         .catch(function (error) {
-            console.info("🚀 ~ file: ocrm.js:38 ~ returnnewPromise ~ error:", error)
+            console.info("🚀 ~ file: ocrm.js:38 ~ returnnewPromise ~ error:", error.response.data)
         })
     })
 }
 
 const checkTokenUseable = (token) => {
     return new Promise((ok, notok) => {
-        const path = `/checktokenuseable`
-        axios.post(serverUrl, { path, token })
+        const url = `${serverUrl}/checktokenuseable`
+        const data = { token }
+        axios.post(url, data)
         .then(function (response) {
             ok(response.data)
         })
@@ -79,6 +101,10 @@ const getListWord = () => {
     return new Promise(async (ok, notok) => {
         const urlCheck = `${ocrmUrl}/api/method/getlistword`
         let token = await AsyncStorage.getItem("token")
+        if(!token){
+            ok({})
+            return
+        }
         headers.Authorization = token
 
         axios.post(urlCheck, {}, { headers })
@@ -86,7 +112,7 @@ const getListWord = () => {
             ok(response.data)
         })
         .catch(function (error) {
-            console.info("🚀 ~ file: ocrm.js:70 ~ returnnewPromise ~ error:", error)
+            console.info("🚀 ~ file: ocrm.js:70 ~ returnnewPromise ~ error:", error.response.data)
         })
     })
 }
@@ -125,9 +151,10 @@ const deleteWord = ({ wordName }) => {
 
 const getQuestionsQuiz = () => {
     return new Promise(async (ok, notok) => {
-        const path = `/getquestion`
+        const url = `${serverUrl}/getquestion`
         let token = await AsyncStorage.getItem("token")
-        axios.post(serverUrl, { path, token })
+        const data = { token }
+        axios.post(url, data)
         .then(function (response) {
             ok(response.data)
         })
@@ -170,9 +197,9 @@ const getSchedule = () => {
 const updateSchedule = (dataSchedule) => {
     return new Promise(async (ok, notok) => {
         let token = await AsyncStorage.getItem("token")
-        const path = `/updateschedule`
-
-        axios.post(serverUrl, { path, token, dataSchedule })
+        const url = `${serverUrl}/updateschedule`
+        const data = { token, dataSchedule }
+        axios.post(url, data)
         .then(function (response) {
             ok(response.data)
         })
@@ -220,7 +247,7 @@ const endQuiz = ({ questionname, dataquiz, done = 0 }) => {
             ok(response.data)
         })
         .catch(function (error) {
-            console.info("🚀 ~ file: ocrm.js:222 ~ returnnewPromise ~ error:", error)
+            console.info("🚀 ~ file: ocrm.js:222 ~ returnnewPromise ~ error:", error.response.data)
         })
     })
 }
@@ -234,7 +261,7 @@ const getTranslateJson = () => {
             ok(response.data.data)
         })
         .catch(function (error) {
-            console.info("🚀 ~ file: ocrm.js:239 ~ returnnewPromise ~ error:", error.response.data)
+            console.info("🚀 ~ file: ocrm.js:237 ~ returnnewPromise ~ error:", error.response.data)
         })
     })
 }
@@ -250,7 +277,83 @@ const deleteUser = () => {
             ok(response.data.data)
         })
         .catch(function (error) {
-            console.info("🚀 ~ file: ocrm.js:239 ~ returnnewPromise ~ error:", error.response.data)
+            console.info("🚀 ~ file: ocrm.js:276 ~ returnnewPromise ~ error:", error)
+        })
+    })
+}
+
+const getReminderContent = () => {
+    return new Promise(async (ok, notok) => {
+        const url = `${ocrmUrl}/api/method/getremindercontent`
+        let token = await AsyncStorage.getItem("token")
+        headers.Authorization = token
+        let languagecode = await AsyncStorage.getItem("languagecode")
+        console.info("🚀 ~ file: ocrm.js:291 ~ returnnewPromise ~ languagecode:", languagecode)
+        const datasend = {
+            languagecode
+        }
+
+        axios.post(url, datasend, { headers })
+        .then(function (response) {
+            ok(response.data.data)
+        })
+        .catch(function (error) {
+            console.info("🚀 ~ file: ocrm.js:292 ~ returnnewPromise ~ error:", error)
+        })
+    })
+}
+
+const checkVersionUpdate = () => {
+    return new Promise(async (ok, notok) => {
+        const url = `${ocrmUrl}/api/method/checkversionupdate`
+        let token = await AsyncStorage.getItem("token")
+        if(!token){
+            ok("")
+            return
+        }
+        headers.Authorization = token
+
+        axios.get(url, { headers })
+        .then(function (response) {
+            ok(response.data.data)
+        })
+        .catch(function (error) {
+            console.info("🚀 ~ file: ocrm.js:308 ~ returnnewPromise ~ error:", error.response.data)
+        })
+    })
+}
+
+const appUpdated = () => {
+    return new Promise(async (ok, notok) => {
+        const url = `${ocrmUrl}/api/method/appupdate`
+        let token = await AsyncStorage.getItem("token")
+        headers.Authorization = token
+
+        axios.get(url, { headers })
+        .then(function (response) {
+            ok(response.data.data)
+        })
+        .catch(function (error) {
+            console.info("🚀 ~ file: ocrm.js:324 ~ returnnewPromise ~ error:", error)
+        })
+    })
+}
+
+const changeLanguageModule = (languagecode) => {
+    return new Promise(async (ok, notok) => {
+        const url = `${ocrmUrl}/api/method/changelanguage`
+        let token = await AsyncStorage.getItem("token")
+        headers.Authorization = token
+        const datasend = {
+            languagecode
+        }
+
+        axios.post(url, datasend, { headers })
+        .then(function (response) {
+            ok(response.data.data)
+        })
+        .catch(function (error) {
+            console.info("🚀 ~ file: ocrm.js:344 ~ returnnewPromise ~ error:", error)
         })
     })
 }
@@ -269,5 +372,10 @@ export {
     checkfirsttime,
     updateFirstSigned,
     getTranslateJson,
-    deleteUser
+    deleteUser,
+    logOut,
+    getReminderContent,
+    checkVersionUpdate,
+    appUpdated,
+    changeLanguageModule
 }

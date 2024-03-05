@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getLocales, getCalendars } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { scale } from 'react-native-size-matters';
+import { changeLanguageModule } from '../../api';
 
 const vncode = "vn"
 
@@ -17,7 +18,7 @@ export default function Language({ showmessage }) {
         setLanguagecode(languagecode)
         await AsyncStorage.setItem('languagecode', languagecode)
         showmessage()
-
+        changeLanguageModule(languagecode)
     }
 
     const loadLanguage = async(languagecode) => {

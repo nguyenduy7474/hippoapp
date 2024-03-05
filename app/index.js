@@ -13,23 +13,17 @@ export default function ContainerPage() {
     CheckLogin().then((check) => {
       if(check){
         setSigned(true)
-      }
-/*       if(!check){
-        router.replace('/containers/Login');
+      }else{
+        router.replace('/containers/Onboard');
         return
-      } */
+      }
     })
   }, [])
 
 
   return (
     <NavigationContainer independent={true}>
-      {signed ? (
-        <HomePage />
-      ): (
-        <ListWords signed={false}/>
-      )}
-      
+      <HomePage />
     </NavigationContainer>
   );
 }

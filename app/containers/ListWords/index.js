@@ -1,9 +1,8 @@
-import { Text, View, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Modal, Linking } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import { SplashScreen } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import StatusBarComponent from '../../components/StatusBar'
 import TopMenu from '../../components/TopMenu'
@@ -11,17 +10,14 @@ import { meaningbackground, tabbarcolor, themeColor2 } from '../../contants/styl
 import ListWordsComponent from './listWords';
 import Search from './search';
 import i18n from '../../i18n';
-import { checkNewVersion } from '../../utils/checkversion';
+import { checkNewVersion, getStoreUrl } from '../../utils/checkversion';
+import { checkVersionUpdate } from '../../api';
 
 
 const TopComponent = ({ onChangeText, signed}) => {
 
-    const addNewWord = () => {
-        if(signed){
-            router.push("containers/AddWord")
-        }else{
-            router.replace('/containers/Login');
-        }
+    const addNewWord = async () => {
+        router.push("containers/AddWord")
     }
 
     return (
@@ -36,6 +32,12 @@ const TopComponent = ({ onChangeText, signed}) => {
 }
 
 const ModalUpdate = ({ modalVisible }) => {
+    const toStore = () => {
+        getStoreUrl().then((url) => {
+            Linking.openURL(url)
+        })
+    }
+
     return (
         <Modal
             animationType="slide"
@@ -47,7 +49,11 @@ const ModalUpdate = ({ modalVisible }) => {
         <View style={styles.centeredView2}>
             <View style={styles.modalView}>
                 <Text style={styles.modalText}>{i18n.t('need_update')}</Text>
+                <TouchableOpacity style={styles.updatebutton} onPress={toStore}>
+                    <Text style={{ color: "white", fontWeight: "bold" }}>{i18n.t('update_button')}</Text>
+                </TouchableOpacity>
             </View>
+
         </View>
     </Modal>
     )
@@ -63,17 +69,20 @@ export default function ListWords({ signed = true }) {
 
     useEffect(() => {
         SplashScreen.hideAsync();
-        setTimeout(async () => {
-            let hasopen = await AsyncStorage.getItem("hasopen") 
-            if(!hasopen){
-                router.replace("/containers/Onboard")
-            }
-        }, 200)
+
         checkNewVersion().then((needsUpdate) => {
             // setModalVisible(true)
             if (needsUpdate) {
                 setModalVisible(true)
+                return
             }
+            checkVersionUpdate().then((data) => {
+                console.info("🚀 ~ file: index.js:80 ~ checkVersionUpdate ~ data:", data)
+                if(typeof data == "object" && !data.updateversion){
+                    router.replace("/containers/NewVersion")
+                }
+
+            })
         })
     }, [])
 
@@ -92,6 +101,12 @@ export default function ListWords({ signed = true }) {
 }
 
 const styles = StyleSheet.create({
+    updatebutton: {
+        backgroundColor: tabbarcolor,
+        padding: 15,
+        borderRadius: 10,
+        marginTop: 25
+    },  
     buttonadd: {
         backgroundColor: meaningbackground,
         width: "100%",

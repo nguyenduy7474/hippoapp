@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "912000429184",
+    "project_id": "hoitto",
+    "storage_bucket": "hoitto.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912000429184:android:c4c61ec69534862f218a65",
+        "android_client_info": {
+          "package_name": "com.hippocampusvn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYPBgT3_g0uKTqKn7bDVbPv6Mjd3y03rY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

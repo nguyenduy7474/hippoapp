@@ -25,11 +25,6 @@ import ButtonLogin from '../../components/ButtonLogin';
 import { themeColor } from '../../contants/style';
 import { getProfile } from '../../api';
 
-GoogleSignin.configure({
-    webClientId: '912000429184-81pu3kl9ahb3g74r6nga88011oe2sdjh.apps.googleusercontent.com',
-    iosClientId: '912000429184-qvldcep1aa6e6aak76sp2truv2cvp60t.apps.googleusercontent.com',
-  });
-
 const deviceos = Device.osName
 const statusBarHeight = Constants.statusBarHeight;
 const windowHeight = Dimensions.get('window').height;
@@ -109,7 +104,11 @@ const Login = () => {
         try {
             setLoading(true)
             let typeLogin = "google-login"
-
+            GoogleSignin.configure({
+                webClientId: '912000429184-81pu3kl9ahb3g74r6nga88011oe2sdjh.apps.googleusercontent.com',
+                iosClientId: '912000429184-qvldcep1aa6e6aak76sp2truv2cvp60t.apps.googleusercontent.com',
+                forceCodeForRefreshToken: true
+            });
             let userInfo = await GoogleSignin.signIn()
             if(!userInfo.accessToken){
                 userInfo = await GoogleSignin.getCurrentUser();
@@ -120,12 +119,11 @@ const Login = () => {
             
             AsyncStorage.setItem("logindata", JSON.stringify(datasave))
             let result = await loginFeature(datasave, typeLogin)
-            console.info("🚀 ~ file: index.js:123 ~ loginGoogle ~ result:", result)
             if(result){
                 setlogined(true)
             }
         } catch (error) {
-            console.info("🚀 ~ file: index.js:126 ~ loginGoogle ~ error:", error)
+            console.log("🚀 ~ file: index.js:126 ~ loginGoogle ~ error:", JSON.parse(JSON.stringify(error)))
             setLoading(false)
             switch (error.code) {
             case statusCodes.NO_SAVED_CREDENTIAL_FOUND:
@@ -153,6 +151,7 @@ const Login = () => {
                     AppleAuthentication.AppleAuthenticationScope.EMAIL,
                 ],
             });
+            console.info("🚀 ~ file: index.js:156 ~ loginApple ~ credential:", credential)
             var datasave = JSON.parse(JSON.stringify(credential))
             datasave.typeLogin = typeLogin
             

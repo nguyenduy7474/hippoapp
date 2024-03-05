@@ -12,7 +12,12 @@ import {
     checkfirsttime, 
     updateFirstSigned,
     getTranslateJson,
-    deleteUser
+    deleteUser,
+    logOut,
+    getReminderContent,
+    checkVersionUpdate,
+    appUpdated,
+    changeLanguageModule
 } from "./ocrm";
 import { checkTokenWorkGG } from "./google";
 
@@ -32,5 +37,10 @@ export {
     updateFirstSigned,
     endQuiz,
     getTranslateJson,
-    deleteUser
+    deleteUser,
+    logOut,
+    getReminderContent,
+    checkVersionUpdate,
+    appUpdated,
+    changeLanguageModule
 }

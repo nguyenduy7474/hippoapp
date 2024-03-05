@@ -1,0 +1,10 @@
+<resources>
+  <string name="app_name">Hoitto</string>
+  <string name="expo_splash_screen_resize_mode" translatable="false">cover</string>
+  <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
+  <string name="facebook_app_id">245918734979137</string>
+  <string name="facebook_client_token">245d1e857059ad124436efbf7cdd3036</string>
+  <string name="fb_login_protocol_scheme">fb245918734979137</string>
+  <string name="ExpoLocalization_supportsRTL" translatable="false">undefined</string>
+  <string name="server_client_id">912000429184-81pu3kl9ahb3g74r6nga88011oe2sdjh.apps.googleusercontent.com</string>
+</resources>

@@ -1,10 +1,9 @@
-import { Pressable, StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native';
-import { useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native';
+import { useEffect, useState } from 'react';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { FlashList } from '@shopify/flash-list';
 import ToggleSwitch from 'toggle-switch-react-native'
 import { scale } from 'react-native-size-matters';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { meaningbackground, tabbarcolor, themeColor2 } from '../../contants/style';
 import i18n from '../../i18n';
@@ -12,24 +11,18 @@ import StatusBarComponent from '../../components/StatusBar'
 import TopMenu from '../../components/TopMenu';
 import { getSchedule, updateSchedule } from '../../api/ocrm';
 
-const dateWeekEng = [
-    { "name": 0, "active": true, "day": "shortSunday" }, 
-    { "name": 1, "active": true, "day": "shortMonday" }, 
-    { "name": 2, "active": true, "day": "shortTuesday" }, 
-    { "name": 3, "active": true, "day": "shortWednesday" }, 
-    { "name": 4, "active": true, "day": "shortThursday" }, 
-    { "name": 5, "active": true, "day": "shortFriday" },
-    { "name": 6, "active": true, "day": "shortSaturday" }
-]
+const isAndroid = Platform.OS === 'android'
 
 export default function Schedule() {
-    const [startTime, setStartTime] = useState(new Date("2023-01-01"))
-    const [endTime, setEndTime] = useState(new Date("2025-01-01T20:00"))
     const [showstart, setShowstart] = useState(false)
     const [showend, setShowend] = useState(false)
     const [updatenoti, setUpdatenoti] = useState(false)
-    const [enabledNoti, setEnabledNoti] = useState(true)
     const [dateofweek, setDateofweek] = useState([])
+    const [scheduledata, setScheduledata] = useState({
+        "start_time": new Date("2023-01-01"),
+        "end_time": new Date("2025-01-01T20:00"),
+        "enable": false
+    })
 
     const openTime = (type) => {
         if (type == "start") {
@@ -47,12 +40,15 @@ export default function Schedule() {
 
     const changeTime = (event, value) => {
         if (showstart) {
-            // setShowstart(false)
-            setStartTime(value)
-
+            setScheduledata({
+                ...scheduledata,
+                start_time: value
+            })
         } else {
-            // setShowend(false)
-            setEndTime(value)
+            setScheduledata({
+                ...scheduledata,
+                end_time: value
+            })
         }
     }
 
@@ -62,9 +58,22 @@ export default function Schedule() {
         setUpdatenoti(!updatenoti)
     }
 
+    const onOfNoti = (state) => {
+        setScheduledata({
+            ...scheduledata,
+            enable: state
+        })
+    }
+
     const dateWeekCheck = async () => {
         let dataSchedule = await getSchedule()
+        
         setDateofweek(JSON.parse(dataSchedule.data.weekday))
+        setScheduledata({
+            "start_time":new Date(`2025-01-01T${dataSchedule.data.start_at}`),
+            "end_time": new Date(`2025-01-01T${dataSchedule.data.end_at}`),
+            "enable": dataSchedule.data.enable
+        })
     }
 
     useEffect(() => {
@@ -72,20 +81,21 @@ export default function Schedule() {
             return
         }
 
-        if (!enabledNoti) {
+        if (!scheduledata.enable) {
             setShowstart(false)
             setShowend(false)
         }
 
         let datasend = {
-            "enable":  enabledNoti ? 1 : 0,
-            "start_at": `${startTime.getHours() < 10 ? "0" + startTime.getHours() : startTime.getHours()}:${startTime.getMinutes() < 10 ? "0" + startTime.getMinutes() : startTime.getMinutes()}:00`,
-            "end_at": `${endTime.getHours() < 10 ? "0" + endTime.getHours() : endTime.getHours()}:${endTime.getMinutes() < 10 ? "0" + endTime.getMinutes() : endTime.getMinutes()}:00`,
+            "enable":  scheduledata.enable ? 1 : 0,
+            "start_at": `${scheduledata.start_time.getHours() < 10 ? "0" + scheduledata.start_time.getHours() : scheduledata.start_time.getHours()}:${scheduledata.start_time.getMinutes() < 10 ? "0" + scheduledata.start_time.getMinutes() : scheduledata.start_time.getMinutes()}:00`,
+            "end_at": `${scheduledata.end_time.getHours() < 10 ? "0" + scheduledata.end_time.getHours() : scheduledata.end_time.getHours()}:${scheduledata.end_time.getMinutes() < 10 ? "0" + scheduledata.end_time.getMinutes() : scheduledata.end_time.getMinutes()}:00`,
             "weekday": JSON.stringify(dateofweek)
         }
+
         updateSchedule(datasend)
 
-    }, [enabledNoti, startTime, endTime, updatenoti])
+    }, [scheduledata, updatenoti])
 
 
     useEffect(() => {
@@ -115,40 +125,40 @@ export default function Schedule() {
                         <Text style={styles.timeText}>{i18n.t('enable_notification')}</Text>
                     </View>
                     <ToggleSwitch
-                        isOn={enabledNoti}
+                        isOn={scheduledata.enable}
                         onColor={meaningbackground}
                         offColor="#e8e8e8"
                         labelStyle={{ color: "black", fontWeight: "900" }}
                         size="large"
-                        onToggle={setEnabledNoti}
+                        onToggle={onOfNoti}
                     />
                 </View>
             </View>
-            {enabledNoti ? (
+            {scheduledata.enable ? (
                 <View>
                     <View
                         style={styles.timeContainer}
                     >
                         <View style={styles.timeRow}>
-                            <View style={styles.textBox}>
+                            <View style={styles.textBoxText}>
                                 <Text style={styles.timeText}>{i18n.t('start_at')}</Text>
                             </View>
                             <TouchableOpacity
                                 style={[styles.textBox, { backgroundColor: meaningbackground, alignItems: "center", }]}
                                 onPress={() => openTime("start")}
                             >
-                                <Text style={styles.timeText}>{startTime.getHours() < 10 ? `0${startTime.getHours()}` : startTime.getHours()}:{startTime.getMinutes() < 10 ? `0${startTime.getMinutes()}` : startTime.getMinutes()}</Text>
+                                <Text style={styles.timeText}>{scheduledata.start_time.getHours() < 10 ? `0${scheduledata.start_time.getHours()}` : scheduledata.start_time.getHours()}:{scheduledata.start_time.getMinutes() < 10 ? `0${scheduledata.start_time.getMinutes()}` : scheduledata.start_time.getMinutes()}</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={[styles.timeRow, { borderTopColor: meaningbackground, borderTopWidth: 1 }]}>
-                            <View style={styles.textBox}>
+                            <View style={styles.textBoxText}>
                                 <Text style={styles.timeText}>{i18n.t('end_at')}</Text>
                             </View>
                             <TouchableOpacity
                                 style={[styles.textBox, { backgroundColor: meaningbackground, alignItems: "center", }]}
                                 onPress={() => openTime("end")}
                             >
-                                <Text style={styles.timeText}>{endTime.getHours() < 10 ? `0${endTime.getHours()}` : endTime.getHours()}:{endTime.getMinutes() < 10 ? `0${endTime.getMinutes()}` : endTime.getMinutes()}</Text>
+                                <Text style={styles.timeText}>{scheduledata.end_time.getHours() < 10 ? `0${scheduledata.end_time.getHours()}` : scheduledata.end_time.getHours()}:{scheduledata.end_time.getMinutes() < 10 ? `0${scheduledata.end_time.getMinutes()}` : scheduledata.end_time.getMinutes()}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -191,7 +201,7 @@ export default function Schedule() {
             {showstart ? (
                 <RNDateTimePicker
                     testID="dateTimePicker1"
-                    value={startTime}
+                    value={scheduledata.start_time}
                     mode={"time"}
                     is24Hour={true}
                     onChange={changeTime}
@@ -203,7 +213,7 @@ export default function Schedule() {
             {showend && (
                 <RNDateTimePicker
                     testID="dateTimePicker2"
-                    value={endTime}
+                    value={scheduledata.end_time}
                     mode={"time"}
                     is24Hour={true}
                     onChange={changeTime}
@@ -236,11 +246,14 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
     },
-    textBox: {
-        width: 100,
+    textBoxText: {
         padding: 10,
         borderRadius: 10,
-
+    },
+    textBox: {
+        padding: 10,
+        borderRadius: 10,
+        width: 100
     },
     timeText: {
         fontSize: scale(18),
@@ -249,7 +262,7 @@ const styles = StyleSheet.create({
     daylearn: {
         backgroundColor: "white",
         width: scale(36),
-        paddingVertical: scale(8),
+        paddingVertical: isAndroid ? scale(6) : scale(8),
         alignItems: "center",
         borderRadius: 50,
         marginHorizontal: scale(4)

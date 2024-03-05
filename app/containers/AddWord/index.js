@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, TextInput, View, TouchableOpacity, Dimensions } from 'react-native';
+import { Platform, StyleSheet, Text, TextInput, View, TouchableOpacity, Dimensions, KeyboardAvoidingView, ScrollView } from 'react-native';
 import Constants from 'expo-constants';
 import { router, useLocalSearchParams } from 'expo-router';
 import FlashMessage from "react-native-flash-message";
@@ -31,16 +31,16 @@ export default function AddWord() {
     const [loading, setLoading] = useState(false)
     const flashmessage = useRef()
     const dispatch = useDispatch()
-    
+
     const saveWord = async () => {
-        if(!word || !definition){
+        if (!word || !definition) {
             flashmessage.current.showMessage({
                 message: i18n.t('word_definition_cannot_blank'),
                 type: "danger",
             });
             return
         }
-        if(checkSpecialCharacter(word) || checkSpecialCharacter(definition)){
+        if (checkSpecialCharacter(word) || checkSpecialCharacter(definition)) {
             flashmessage.current.showMessage({
                 message: i18n.t('word_have_special_character'),
                 type: "danger",
@@ -54,15 +54,15 @@ export default function AddWord() {
             definition,
             remindSentence
         })
-        if(result.data.success == 2){ // trùng
+        if (result.data.success == 2) { // trùng
             flashmessage.current.showMessage({
                 message: i18n.t('word_exist'),
                 type: "danger",
             });
         }
-        if(result.data.success == 1){ // Thành công
-            dispatch(updateListWordAction(Math.floor(Math.random()*90000) + 10000))
-            if(!word_name){
+        if (result.data.success == 1) { // Thành công
+            dispatch(updateListWordAction(Math.floor(Math.random() * 90000) + 10000))
+            if (!word_name) {
                 setWord("")
                 setDefinition("")
                 setRemindSentence("")
@@ -76,7 +76,7 @@ export default function AddWord() {
     }
 
     const getCurrentWord = async () => {
-        let currentWord = await getWord({ wordName: word_name})
+        let currentWord = await getWord({ wordName: word_name })
         setWord(currentWord.data.word)
         setDefinition(currentWord.data.definition)
         setRemindSentence(currentWord.data.remind_sentence)
@@ -89,7 +89,7 @@ export default function AddWord() {
     const deleteWordNow = async () => {
         setLoading(true)
         await deleteWord({ wordName: word_name })
-        dispatch(updateListWordAction(Math.floor(Math.random()*90000) + 10000))
+        dispatch(updateListWordAction(Math.floor(Math.random() * 90000) + 10000))
         router.back()
     }
 
@@ -98,114 +98,113 @@ export default function AddWord() {
     }
 
     useEffect(() => {
-        if(word_name){
+        if (word_name) {
             getCurrentWord()
         }
     }, [])
 
     return (
-        <View style={styles.container}>
-            <StatusBarComponent />
-            <DoneMenu 
-                onDelete={word_name ? confirmDelete : false}
-            />
-            <View style={styles.topView}>
-                <Image source={require('../../../assets/images/writebook.png')} style={styles.image}/>
-                <Text style={styles.textdes}>{i18n.t('guildaddword')}</Text>
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setWord}
-                    value={word}
-                    placeholder={`${i18n.t('words')}(${i18n.t('require')})`}
-                />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setDefinition}
-                    value={definition}
-                    placeholder={`${i18n.t('definition')}(${i18n.t('require')})`}
-                />
-                <TextInput
-                    style={styles.inpputMultiple}
-                    onChangeText={setRemindSentence}
-                    multiline={true}
-                    numberOfLines={10}
-                    value={remindSentence}
-                    placeholder={i18n.t('sentence')}
-                />
-                <View style={{ bottom: scale(50), position: "absolute", width:"100%" }}>
-                    <FlashMessage 
-                        ref={flashmessage} 
-                        floating={true}
-                        position="bottom"
-                        icon="success"
-                        style={{
-                            bottom: Platform.OS === 'android' ? scale(50) : scale(20),
-                            width: "100%",
-                            alignSelf: "center"
-                        }}
-                    />
-                    <TouchableOpacity style={styles.buttonadd} onPress={saveWord}>
-                        <Text style={styles.buttontext}>{i18n.t('save')}</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <Modal isVisible={isVisibleModal}>
-                {loading ? (
-                    <>
-                        <View style={styles.loading}>
-                        </View>
-                        <LottieView
-                            autoPlay={true}
-                            style={{
-                                width: scale(200),
-                                position: "absolute",
-                                zIndex: 10,
-                                alignSelf: "center",
-                                height: "100%"
-                            }}
-                            // Find more Lottie files at https://lottiefiles.com/featured
-                            source={require('../../../assets/lottie/loading.json')}
-                        />
-                    </>
-                ): (
-                    <View style={styles.modal}>
-                        
-                        <Text style={styles.titleModal}>{i18n.t('confirm_delete_word')}</Text>
-                        <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
-                            <TouchableOpacity 
-                                style={[styles.buttonModal, { backgroundColor: "grey" }]} 
-                                onPress={closeModal}
-                            >
-                                <Text style={styles.buttonText}>{i18n.t('cancel')}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                                style={[styles.buttonModal, { backgroundColor: colorWrong, marginLeft: 20}]}
-                                onPress={deleteWordNow}
-                            >
-                                <Text style={styles.buttonText}>{i18n.t('delete')}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                )}
-                
-            </Modal>
 
-        </View>
-      );
+            <View style={styles.container}>
+                <StatusBarComponent />
+                <DoneMenu
+                    onDelete={word_name ? confirmDelete : false}
+                />
+                    <KeyboardAvoidingView 
+                        keyboardVerticalOffset={0}
+                        behavior={Platform.OS == "ios" ? "padding": null}
+                        enabled
+                    >
+                        <ScrollView >
+                            <View style={styles.topView}>
+                                <Image source={require('../../../assets/images/writebook.png')} style={styles.image} />
+                                <Text style={styles.textdes}>{i18n.t('guildaddword')}</Text>
+                                
+                                <TextInput
+                                    style={styles.input}
+                                    onChangeText={setWord}
+                                    value={word}
+                                    autoFocus
+                                    placeholder={`${i18n.t('words')}(${i18n.t('require')})`}
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    onChangeText={setDefinition}
+                                    value={definition}
+                                    placeholder={`${i18n.t('definition')}(${i18n.t('require')})`}
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    onChangeText={setRemindSentence}
+                                    value={remindSentence}
+                                    placeholder={i18n.t('sentence')}
+                                />
+                                <View style={{ bottom: scale(50), position: "absolute", width: "100%" }}>
+                                    <FlashMessage
+                                        ref={flashmessage}
+                                        floating={true}
+                                        position="bottom"
+                                        icon="success"
+                                        style={{
+                                            bottom: Platform.OS === 'android' ? scale(50) : scale(20),
+                                            width: "100%",
+                                            alignSelf: "center"
+                                        }}
+                                    />
+                                    <TouchableOpacity style={styles.buttonadd} onPress={saveWord}>
+                                        <Text style={styles.buttontext}>{i18n.t('save')}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
+                <Modal isVisible={isVisibleModal}>
+                    {loading ? (
+                        <>
+                            <View style={styles.loading}>
+                            </View>
+                            <LottieView
+                                autoPlay={true}
+                                style={{
+                                    width: scale(200),
+                                    position: "absolute",
+                                    zIndex: 10,
+                                    alignSelf: "center",
+                                    height: "100%"
+                                }}
+                                // Find more Lottie files at https://lottiefiles.com/featured
+                                source={require('../../../assets/lottie/loading.json')}
+                            />
+                        </>
+                    ) : (
+                        <View style={styles.modal}>
+
+                            <Text style={styles.titleModal}>{i18n.t('confirm_delete_word')}</Text>
+                            <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                                <TouchableOpacity
+                                    style={[styles.buttonModal, { backgroundColor: "grey" }]}
+                                    onPress={closeModal}
+                                >
+                                    <Text style={styles.buttonText}>{i18n.t('cancel')}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.buttonModal, { backgroundColor: colorWrong, marginLeft: 20 }]}
+                                    onPress={deleteWordNow}
+                                >
+                                    <Text style={styles.buttonText}>{i18n.t('delete')}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    )}
+
+                </Modal>
+            </View>
+    );
 }
 
 const styles = StyleSheet.create({
-    inpputMultiple: {
-        backgroundColor: inputbackgroundcolor,
-        width: "100%",
-        marginTop: 20,
-        paddingVertical: 10,
-        borderRadius: 10,
-        fontSize: scale(16),
-        color: textColor,
-        paddingLeft: 10,
-        textAlignVertical: 'top',
-        height: scale(100)
+    container: {
+
     },
     input: {
         backgroundColor: inputbackgroundcolor,
@@ -227,7 +226,7 @@ const styles = StyleSheet.create({
     topView: {
         paddingHorizontal: 10,
         paddingTop: 50,
-        alignItems:"center",
+        alignItems: "center",
         height: windowHeight - statusBarHeight - 50,
     },
     image: {

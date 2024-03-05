@@ -14,7 +14,7 @@ import { saveUserInforSelector } from '../../redux/selector';
 import i18n from '../../i18n';
 import Language from '../Login/language';
 import { colorWrong } from '../../contants/style';
-import { deleteUser } from '../../api';
+import { deleteUser, logOut } from '../../api';
 import StatusBarComponent from '../../components/StatusBar';
 import GobackMenu from '../../components/gobackMenu';
 
@@ -25,6 +25,7 @@ export default function Profile() {
     const [loading, setLoading] = useState(false)
 
     const logout = async () => {
+        await logOut()
         let lang = await AsyncStorage.getItem('languagecode');
         let hasopen = await AsyncStorage.getItem('hasopen');
         AsyncStorage.clear()
@@ -47,7 +48,6 @@ export default function Profile() {
         setIsVisibleModal(false)
         setLoading(true)
         let res = await deleteUser()
-        console.info("🚀 ~ file: index.js:48 ~ deleteAccountNow ~ res:", res)
         if(res.success){
             logout()
         }

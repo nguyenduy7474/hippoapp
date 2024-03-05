@@ -12,7 +12,7 @@ const checkTokenWorkGG = (token) => {
             }
         })
         .catch(function (error) {
-            console.info("🚀 ~ file: google.js:15 ~ returnnewPromise ~ error:", error)
+            console.info("🚀 ~ file: google.js:15 ~ returnnewPromise ~ error:", error.response)
             ok(false)
         })
     })

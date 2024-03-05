@@ -45,7 +45,10 @@ export default function ListWordsComponent({ searchtext }) {
 
     const getDataWord = async () => {
         let listWord = await getListWord()
-        setDataWordSource(listWord.data)
+        if(listWord){
+            setDataWordSource(listWord.data)
+        }
+        
     }
 
     useEffect(() => {

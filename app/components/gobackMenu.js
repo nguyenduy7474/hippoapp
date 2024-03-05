@@ -13,8 +13,8 @@ export default function GobackMenu({ signed = true }) {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={goBack} style={{ marginLeft: 10 }}>
-                <Image source={require('../../assets/images/back.png')} style={{ width: scale(20), height: scale(20)}}/>
+            <TouchableOpacity onPress={goBack} style={{ marginLeft: 10, padding: 10, paddingLeft: 0, width: scale(30), zIndex: 2 }}>
+                <Image source={require('../../assets/images/back.png')} style={{ width: scale(25), height: scale(25)}}/>
             </TouchableOpacity>
             <View style={styles.viewtitle}>
                 <Text style={styles.title}>{i18n.t('settings')}</Text>
@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
         width: "100%",
         display: "flex",
         alignItems: "center",
+        zIndex: 1
     },
     title: {
         fontSize: scale(16),

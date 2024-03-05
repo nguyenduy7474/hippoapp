@@ -25,10 +25,9 @@ const HomePage = () => {
 
   useEffect(() => {
     checkfirsttime().then((data) => {
-      dispatch(saveUserInfor(data))
-      /*         if(!data.signed){
-                router.replace("/containers/Onboard")
-              } */
+      if (data) {
+        dispatch(saveUserInfor(data))
+      }
     })
     i18n.onChange(() => {
       if (i18n.t('words').indexOf("[missing") == -1) {
@@ -40,51 +39,52 @@ const HomePage = () => {
   const borderRadius = 15
 
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarStyle: {
-          height: Device.osName == "Android" ? 60 : 100,
-          borderTopLeftRadius: borderRadius,
-          borderTopRightRadius: borderRadius,
-          borderTopWidth: 1,
-          borderLeftWidth: 1,
-          borderRightWidth: 1,
-          borderColor: "#d1d1d1"
-        },
-        tabBarIcon: ({ focused, color, size }) => {
-          const animationWord = useRef(null);
-          let icon = require('../../../assets/lottie/book.json')
-          let iconSize = Device.osName == "Android" ? scale(35) : scale(40)
-
-          if (route.name === '/containers/LearnNow') {
-            icon = require('../../../assets/lottie/learnnow.json')
-            iconSize = Device.osName == "Android" ? scale(45) : scale(60)
-          }
-
-          if (route.name === '/containers/Schedule') {
-            icon = require('../../../assets/lottie/schedule.json')
-            iconSize = Device.osName == "Android" ? scale(35) : scale(50)
-          }
-
-          return (
-            <LottieView
-              ref={animationWord}
-              style={{
-                width: iconSize,
-                height: iconSize,
-              }}
-              // Find more Lottie files at https://lottiefiles.com/featured'
-              autoPlay={focused}
-              loop={false}
-              progress={1}
-              useNativeDriver={true}
-              source={icon}
-            />
-          )
-        },
-      })}>
+    <>
       {loaded || i18n.t('words').indexOf("[missing") == -1 ? (
-        <>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarStyle: {
+              height: Device.osName == "Android" ? 60 : 100,
+              borderTopLeftRadius: borderRadius,
+              borderTopRightRadius: borderRadius,
+              borderTopWidth: 1,
+              borderLeftWidth: 1,
+              borderRightWidth: 1,
+              borderColor: "#d1d1d1"
+            },
+            tabBarIcon: ({ focused, color, size }) => {
+              const animationWord = useRef(null);
+              let icon = require('../../../assets/lottie/book.json')
+              let iconSize = Device.osName == "Android" ? scale(35) : scale(40)
+
+              if (route.name === '/containers/LearnNow') {
+                icon = require('../../../assets/lottie/learnnow.json')
+                iconSize = Device.osName == "Android" ? scale(45) : scale(60)
+              }
+
+              if (route.name === '/containers/Schedule') {
+                icon = require('../../../assets/lottie/schedule.json')
+                iconSize = Device.osName == "Android" ? scale(35) : scale(50)
+              }
+
+              return (
+                <LottieView
+                  ref={animationWord}
+                  style={{
+                    width: iconSize,
+                    height: iconSize,
+                  }}
+                  // Find more Lottie files at https://lottiefiles.com/featured'
+                  autoPlay={focused}
+                  loop={false}
+                  progress={1}
+                  useNativeDriver={true}
+                  source={icon}
+                />
+              )
+            },
+          })}>
+
           <Tab.Screen
             name="/containers/ListWords"
             component={ListWords}
@@ -148,19 +148,12 @@ const HomePage = () => {
               tabBarActiveTintColor: "white"
             }}
           />
-        </>
+        </Tab.Navigator>
       ) : (
-        <Tab.Screen
-          name="/containers/Loading"
-          component={Loading}
-          options={{
-            headerShown: false,
-            tabBarLabel: `Đang tải...`,
-          }}
-        />
+        <Loading />
       )}
+    </>
 
-    </Tab.Navigator>
   );
 }
 
