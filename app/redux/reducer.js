@@ -1,6 +1,7 @@
 const initState = {
     updateListWord: 1,
-    firsttimeopen: true
+    firsttimeopen: true,
+    completequiz: false
 }
 
 const rootReducer = (state = initState, action) => {
@@ -24,6 +25,11 @@ const rootReducer = (state = initState, action) => {
             return{
                 ...state,
                 firsttimeopen: action.payload
+            }
+        case "quiz/checkcompletequiz":
+            return{
+                ...state,
+                completequiz: action.payload
             }
         default:
             return state

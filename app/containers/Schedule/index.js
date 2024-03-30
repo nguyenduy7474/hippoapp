@@ -4,6 +4,8 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { FlashList } from '@shopify/flash-list';
 import ToggleSwitch from 'toggle-switch-react-native'
 import { scale } from 'react-native-size-matters';
+import * as Notifications from 'expo-notifications';
+
 
 import { meaningbackground, tabbarcolor, themeColor2 } from '../../contants/style';
 import i18n from '../../i18n';
@@ -65,15 +67,24 @@ export default function Schedule() {
         })
     }
 
+    const checkNotipermission = async () => {
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        return existingStatus
+    }
+
     const dateWeekCheck = async () => {
-        let dataSchedule = await getSchedule()
-        
-        setDateofweek(JSON.parse(dataSchedule.data.weekday))
-        setScheduledata({
-            "start_time":new Date(`2025-01-01T${dataSchedule.data.start_at}`),
-            "end_time": new Date(`2025-01-01T${dataSchedule.data.end_at}`),
-            "enable": dataSchedule.data.enable
-        })
+        const check = await checkNotipermission()
+
+        if(check == "granted"){
+            let dataSchedule = await getSchedule()
+            
+            setDateofweek(JSON.parse(dataSchedule.data.weekday))
+            setScheduledata({
+                "start_time":new Date(`2025-01-01T${dataSchedule.data.start_at}`),
+                "end_time": new Date(`2025-01-01T${dataSchedule.data.end_at}`),
+                "enable": dataSchedule.data.enable
+            })
+        }
     }
 
     useEffect(() => {

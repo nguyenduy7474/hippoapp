@@ -4,19 +4,34 @@ import { subtextcolor, themeColor, themeColor2 } from '../contants/style';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { scale } from 'react-native-size-matters';
+import LottieView from 'lottie-react-native';
 
-
-export default function LearnItemLarge({ title, description, imagesrc, iconposition, onpress, color, style, disabled = false }) {
+export default function LearnItemLarge({ title, description, imagesrc, iconposition, onpress, color, style, disabled = false, complete }) {
   return (
     <TouchableOpacity style={[styles.container, style]} onPress={() => onpress()} disabled={disabled}>
       <LinearGradient
-          // Button Linear Gradient
-          colors={color}
-          style={styles.containerlinear}
-          start={[0, 0]} 
-          end={[1, 0]}
+        // Button Linear Gradient
+        colors={color}
+        style={styles.containerlinear}
+        start={[0, 0]}
+        end={[1, 0]}
       >
-        <Image 
+        {complete ? (
+          <LottieView
+            autoPlay={true}
+            loop={false}
+            style={{
+              width: scale(70),
+              position: "absolute",
+              left: scale(0),
+              top: scale(0),
+              zIndex: 10000,
+            }}
+            source={require('../../assets/lottie/complete.json')}
+          />
+        ): null}
+
+        <Image
           source={imagesrc}
           style={[styles.icon, {
             top: iconposition == "top" ? -10 : 0,
@@ -26,8 +41,8 @@ export default function LearnItemLarge({ title, description, imagesrc, iconposit
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.description}>{description}</Text>
           {disabled ? (
-            <Text style={{ color: "#780000", fontWeight: "bold", fontSize: scale(18)}}>Coming soon</Text>
-          ): ""}
+            <Text style={{ color: "#780000", fontWeight: "bold", fontSize: scale(18) }}>Coming soon</Text>
+          ) : ""}
         </View>
       </LinearGradient>
 
@@ -39,7 +54,7 @@ export default function LearnItemLarge({ title, description, imagesrc, iconposit
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 10,
-    marginTop: 20,
+    marginTop: 10,
   },
   containerlinear: {
     padding: 20,
@@ -49,7 +64,7 @@ const styles = StyleSheet.create({
   leftside: {
     alignItems: "center"
   },
-  title:{
+  title: {
     fontSize: scale(28),
     fontWeight: "bold",
     color: "white",
@@ -59,7 +74,7 @@ const styles = StyleSheet.create({
     fontSize: scale(14),
     color: subtextcolor
   },
-  icon:{
+  icon: {
     width: 120,
     height: 120,
   }

@@ -2,14 +2,12 @@ import { View, StyleSheet, Dimensions, Text } from 'react-native';
 import Constants from 'expo-constants';
 import { FlashList } from '@shopify/flash-list';
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { router } from 'expo-router';
 import LottieView from 'lottie-react-native';
 
 import QuizItem from './quizItem';
 import StatusBarComponent from '../../components/StatusBar'
 import ProgressHeader from '../../components/Progress';
-import { saveQuestionsQuizSelector } from '../../redux/selector';
 import { endQuiz, getQuestionsQuiz } from '../../api';
 import { scale } from 'react-native-size-matters';
 import i18n from '../../i18n';
@@ -110,17 +108,14 @@ export default function Quiz() {
             setNotvocabulary(true)
             return
         }
-        
+
         let listDataQuestion = shuffle(JSON.parse(JSON.stringify(dataQuizFetch.result.data.questionsDoc.listData)))
         if(dataQuizFetch.result.data.questionsDoc.task_today){
             setDayquestion(true)
         }else{
             setDayquestion(false)
         }
-        
-/*         listDataQuestion.map(item => {
-            console.info("🚀 ~ file: index.js:81 ~ useEffect ~ item.result:", item.result)
-        }) */
+
         setDataQuiz(listDataQuestion)
         setDataQuizFetchData(dataQuizFetch.result.data)
     }

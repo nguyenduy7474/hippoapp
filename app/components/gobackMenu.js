@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 import { scale } from 'react-native-size-matters';
 import i18n from '../i18n';
 
-export default function GobackMenu({ signed = true }) {
+export default function GobackMenu({ signed = true, screenname }) {
 
     const goBack = () => {
         router.back()
@@ -17,7 +17,7 @@ export default function GobackMenu({ signed = true }) {
                 <Image source={require('../../assets/images/back.png')} style={{ width: scale(25), height: scale(25)}}/>
             </TouchableOpacity>
             <View style={styles.viewtitle}>
-                <Text style={styles.title}>{i18n.t('settings')}</Text>
+                <Text style={styles.title}>{i18n.t(screenname)}</Text>
             </View>
         </View>
     );

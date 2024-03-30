@@ -1,25 +1,38 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
+
 import StatusBarComponent from '../../components/StatusBar'
 import TopMenu from '../../components/TopMenu';
 import LearnItemLarge from '../../components/LearnItemlarge';
 import { router } from 'expo-router';
 import i18n from '../../i18n';
-import { getQuestionsQuiz } from '../../api';
-import { saveQuestiosQuiz } from '../../redux/action';
-import { useDispatch } from 'react-redux';
+import { checkCompleteQuizSelector } from '../../redux/selector';
+import { useState } from 'react';
+import { checkCompleteQuizToday } from '../../api';
 
 export default function LearnNow() {
-    const dispatch = useDispatch()
+    const [completeQuizToday, setCompleteQuizToday] = useState(false)
+    const isFocused = useIsFocused();
 
     const flashcardLearn = () => {
         router.push('containers/FlashCard')
     }
 
     const quizLearn = async () => {
-        // let dataQuiz = await getQuestionsQuiz()
-        // dispatch(saveQuestiosQuiz(dataQuiz))
         router.push('containers/Quiz')
     }
+
+    useState(() => {
+        if(isFocused){
+            checkCompleteQuizToday().then((data) => {
+                if(data.success){
+                    setCompleteQuizToday(true)
+                }else{
+                    setCompleteQuizToday(false)
+                }
+            })
+        }
+    }, [isFocused])
     
 
     return (
@@ -32,6 +45,7 @@ export default function LearnNow() {
                 imagesrc={require("../../../assets/images/quiz.png")}
                 color={["#662D8C", "#ED1E79"]}
                 onpress={quizLearn}
+                complete={completeQuizToday}
             />
             <LearnItemLarge 
                 title={i18n.t('flash_card')}

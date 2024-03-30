@@ -1,14 +1,15 @@
 import { Text, View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { inputbackgroundcolor, tabbarcolor, colorWrong } from '../../contants/style';
 import Constants from 'expo-constants';
-import { FlashList } from '@shopify/flash-list';
 import { scale } from 'react-native-size-matters';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { BlurView } from "@react-native-community/blur";
 import { endQuiz } from '../../api';
 import i18n from '../../i18n';
+import CountryFlag from 'react-native-country-flag';
+import { Feather } from '@expo/vector-icons';
 
 
 const statusBarHeight = Constants.statusBarHeight;
@@ -148,6 +149,10 @@ export default function QuizItem({
         setBlur(false)
     }
 
+    const editWord = () => {
+        router.push({ pathname: "containers/AddWord", params: { word_name: data.name } });
+    }
+
     useEffect(() => {
         if(lose == 0){
             setButtonText("go_back")
@@ -166,34 +171,45 @@ export default function QuizItem({
         <View style={styles.container}>
             <View style={styles.bodycontainer}>
                 <View style={styles.subbodycontainer}>
-                    <Text style={styles.question}>{i18n.t('what_definition')}</Text>
+                    <View style={styles.questionView}>
+                        <Text style={styles.question}>{i18n.t('what_definition')}</Text>
+{/*                         <TouchableOpacity onPress={editWord}>
+                            <Feather name="edit" size={scale(20)} color={tabbarcolor} />
+                        </TouchableOpacity> */}
+                    </View>
                     {data.answer && data.answer.length > 0 ? (
                         <>
-                        <View style={[styles.data, {backgroundColor: backgroundColor}]}>
-                            <Text style={[styles.datatext, {color: textColor}]}>{data.word}</Text>
-                            <TouchableOpacity style={styles.remindsentence} onPress={removeblur} >
-                                <Text style={[styles.blurtext, {color: textColor}]}>{data.remind_sentence}</Text>
-                                {data.remind_sentence && blur ? (
-                                    <BlurView
-                                        style={styles.absolute}
-                                        blurType="light"
-                                        blurAmount={4}
-                                        overlayColor=''
-                                        reducedTransparencyFallbackColor="white"
-                                    />
-                                ): ""}
-                                
-                            </TouchableOpacity>
-                        </View>
-                        {data.answer.map((item, index) => renderAnswer({item, index}))}
-{/*                         <FlashList 
-                            data={data.answer}
-                            renderItem={({item, index}) => renderAnswer({item, index})}
-                            keyExtractor={(item) => item.toString()}
-                            estimatedItemSize={4}
-                            extraData={[clickAnswer, correct]}
-                            scrollEnabled={false}
-                        /> */}
+                            <View style={[styles.data, {backgroundColor: backgroundColor}]}>
+                                {data.word_countrycode ? (
+                                    <CountryFlag isoCode={data.word_countrycode || ""} size={scale(20)} style={styles.countryflag} />
+                                ): null}
+                                {data.word_type ? (
+                                    <Text style={[styles.wordtype, {color: textColor}]}>{data.word_type}</Text>
+                                ): null}
+                                <Text style={[styles.datatext, {color: textColor}]}>{data.word}</Text>
+                                <TouchableOpacity style={styles.remindsentence} onPress={removeblur} >
+                                    <Text style={[styles.blurtext, {color: textColor}]}>{data.remind_sentence}</Text>
+                                    {data.remind_sentence && blur ? (
+                                        <BlurView
+                                            style={styles.absolute}
+                                            blurType="light"
+                                            blurAmount={4}
+                                            overlayColor=''
+                                            reducedTransparencyFallbackColor="white"
+                                        />
+                                    ): ""}
+                                    
+                                </TouchableOpacity>
+                            </View>
+                            {data.answer.map((item, index) => renderAnswer({item, index}))}
+    {/*                         <FlashList 
+                                data={data.answer}
+                                renderItem={({item, index}) => renderAnswer({item, index})}
+                                keyExtractor={(item) => item.toString()}
+                                estimatedItemSize={4}
+                                extraData={[clickAnswer, correct]}
+                                scrollEnabled={false}
+                            /> */}
                         </>
                     ): null}
                     
@@ -227,10 +243,28 @@ export default function QuizItem({
 }
 
 const styles = StyleSheet.create({
+    questionView: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
+    },
     container: {
         backgroundColor: "white",
         width: windowWidth,
         height: "100%",
+    },
+    countryflag: {
+        borderRadius: scale(5),
+        position: "absolute",
+        left: scale(10),
+        top: scale(10)
+    },
+    wordtype: {
+        position: "absolute",
+        right: scale(10),
+        top: scale(10),
+        fontSize: scale(18)
     },
     bodycontainer: {
         marginHorizontal: 10,
@@ -258,7 +292,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
     question: {
-        fontSize: 20,
+        fontSize: scale(16),
     },
     data: {
         marginVertical: 10,

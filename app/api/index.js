@@ -17,7 +17,13 @@ import {
     getReminderContent,
     checkVersionUpdate,
     appUpdated,
-    changeLanguageModule
+    changeLanguageModule,
+    updateLanguageCodeLearn,
+    getReminderVocabulary,
+    getWordType,
+    translateWord,
+    updateLanguageAllWord,
+    checkCompleteQuizToday
 } from "./ocrm";
 import { checkTokenWorkGG } from "./google";
 
@@ -42,5 +48,11 @@ export {
     getReminderContent,
     checkVersionUpdate,
     appUpdated,
-    changeLanguageModule
+    changeLanguageModule,
+    updateLanguageCodeLearn,
+    getReminderVocabulary,
+    getWordType,
+    translateWord,
+    updateLanguageAllWord,
+    checkCompleteQuizToday
 }

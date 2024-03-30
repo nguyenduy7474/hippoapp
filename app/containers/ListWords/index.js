@@ -3,6 +3,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import { SplashScreen } from 'expo-router';
+import { AntDesign } from '@expo/vector-icons';
 
 import StatusBarComponent from '../../components/StatusBar'
 import TopMenu from '../../components/TopMenu'
@@ -12,9 +13,10 @@ import Search from './search';
 import i18n from '../../i18n';
 import { checkNewVersion, getStoreUrl } from '../../utils/checkversion';
 import { checkVersionUpdate } from '../../api';
+import { scale } from 'react-native-size-matters';
 
 
-const TopComponent = ({ onChangeText, signed}) => {
+const TopComponent = ({ onChangeText, signed, orderType, changeOrderType}) => {
 
     const addNewWord = async () => {
         router.push("containers/AddWord")
@@ -27,6 +29,20 @@ const TopComponent = ({ onChangeText, signed}) => {
                 <Text style={styles.buttontext}>{i18n.t('newword')}</Text>
             </TouchableOpacity>
             <Search onChangeText={onChangeText} />
+            <View style={styles.orderView}>
+                <Text></Text>
+                <TouchableOpacity 
+                    onPress={changeOrderType}
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center"
+                    }}
+                >
+                    <AntDesign name={orderType.icon} size={16} color="black" />
+                    <Text style={styles.orderText}>{orderType.text}</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -62,6 +78,26 @@ const ModalUpdate = ({ modalVisible }) => {
 export default function ListWords({ signed = true }) {
     const [searchtext, setSearchtext] = useState("")
     const [modalVisible, setModalVisible] = useState(false);
+    const [totalWord, setTotalWord] = useState(0)
+
+    const [orderType, setOrderType] = useState({
+        "text": i18n.t('newest'),
+        "icon": "arrowup"
+    })
+
+    const changeOrderType = () => {
+        if(orderType.icon == "arrowup"){
+            setOrderType({
+                "text": i18n.t('oldest'),
+                "icon": "arrowdown"
+            })
+        }else{
+            setOrderType({
+                "text": i18n.t('newest'),
+                "icon": "arrowup"
+            })
+        }
+    }
 
     const onChangeText = (data) => {
         setSearchtext(data)
@@ -77,7 +113,6 @@ export default function ListWords({ signed = true }) {
                 return
             }
             checkVersionUpdate().then((data) => {
-                console.info("🚀 ~ file: index.js:80 ~ checkVersionUpdate ~ data:", data)
                 if(typeof data == "object" && !data.updateversion){
                     router.replace("/containers/NewVersion")
                 }
@@ -89,10 +124,10 @@ export default function ListWords({ signed = true }) {
     return (
         <View style={{ flex: 1 }}>
             <StatusBarComponent />
-            <TopMenu signed={signed}/>
-            <TopComponent onChangeText={onChangeText} signed={signed}/>
+            <TopMenu signed={signed} leftdata={totalWord}/>
+            <TopComponent onChangeText={onChangeText} signed={signed} orderType={orderType} changeOrderType={changeOrderType}/>
             {signed ? (
-                <ListWordsComponent searchtext={searchtext} />
+                <ListWordsComponent searchtext={searchtext} orderType={orderType} setTotalWord={setTotalWord}/>
             ): null}
             
             <ModalUpdate modalVisible={modalVisible} />
@@ -101,6 +136,16 @@ export default function ListWords({ signed = true }) {
 }
 
 const styles = StyleSheet.create({
+    orderText: {
+        fontSize: scale(14),
+    },
+    orderView: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingVertical: scale(5)
+    },
     updatebutton: {
         backgroundColor: tabbarcolor,
         padding: 15,

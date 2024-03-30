@@ -37,7 +37,7 @@ const renderItem = ({ name, word, definition, index }) => {
     )
 }
 
-export default function ListWordsComponent({ searchtext }) {
+export default function ListWordsComponent({ searchtext, orderType, setTotalWord }) {
     const [dataWordSource, setDataWordSource] = useState([])
     const [dataword, setDataword] = useState([])
     const list = useRef(null);
@@ -47,12 +47,16 @@ export default function ListWordsComponent({ searchtext }) {
         let listWord = await getListWord()
         if(listWord){
             setDataWordSource(listWord.data)
+            setTotalWord(listWord.data.length)
         }
-        
     }
 
     useEffect(() => {
         if(!checkSpecialCharacter(searchtext)){
+            if(dataWordSource.length == 0){
+                return
+            }
+            console.info("🚀 ~ file: listWords.js:62 ~ listSearch ~ dataWordSource:", dataWordSource)
             let listSearch = dataWordSource.filter(item => {
                 let re = new RegExp(searchtext,"i");
                 if(re.test(item.word)){
@@ -65,6 +69,19 @@ export default function ListWordsComponent({ searchtext }) {
                 LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
             }
 
+            listSearch.sort((a, b) => {
+                let dateA = new Date(a.modified);
+                let dateB = new Date(b.modified);
+                
+                if(orderType.icon == "arrowup"){
+                    if (dateA > dateB) return -1; // Change to -1 for descending order
+                    if (dateA < dateB) return 1;  // Change to 1 for descending order
+                }else{
+                    if (dateA < dateB) return -1; // Change to -1 for ascending order
+                    if (dateA > dateB) return 1;  // Change to 1 for ascending order
+                }
+                return 0;
+            })
             setDataword(listSearch)
         }else{
             console.info("🚀 ~ chứa ký tự đặc biệt")
@@ -72,8 +89,18 @@ export default function ListWordsComponent({ searchtext }) {
     }, [searchtext, dataWordSource])
 
     useEffect(() => {
-        getDataWord()
+        setDataword([])
     }, [updateListWord])
+
+    useEffect(() => {
+        setDataword([])
+    }, [orderType])
+
+    useEffect(() => {
+        if(dataword.length == 0){
+            getDataWord()
+        }
+    }, [dataword])
 
     return (
         <View style={styles.container}>
@@ -81,9 +108,9 @@ export default function ListWordsComponent({ searchtext }) {
                 <FlashList
                     data={dataword}
                     renderItem={({ item, index }) => renderItem({...item, index})}
-                    estimatedItemSize={200}
+                    estimatedItemSize={dataword.length}
                     numColumns={2}
-                    keyExtractor={item => item.name}
+                    keyExtractor={item => item.name.toString()}
                     ref={list}
                     contentContainerStyle={{
                         paddingBottom: 15

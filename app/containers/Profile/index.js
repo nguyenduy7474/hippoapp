@@ -40,6 +40,10 @@ export default function Profile() {
         router.replace({ pathname: "containers/Login", params: { logout: true } })
     }
 
+    const preferences = () => {
+        router.push('containers/Preferences')
+    }
+
     const deleteAccountAsk = () => {
         setIsVisibleModal(true)
     }
@@ -67,12 +71,16 @@ export default function Profile() {
     return (
         <>
             <StatusBarComponent />
-            <GobackMenu />
+            <GobackMenu screenname="settings"/>
             <View style={styles.container}>
                 <View style={styles.info}>
                     <Text style={styles.textinfo}>{userInfor.first_name}</Text>
                     <Text style={styles.subtextinfo}>{userInfor.email}</Text>
                 </View>
+
+                <TouchableOpacity style={styles.buttonadd} onPress={preferences}>
+                    <Text style={styles.buttontext}>{i18n.t('option')}</Text>
+                </TouchableOpacity>
 
                 <TouchableOpacity style={styles.buttonadd} onPress={logout}>
                     <Text style={styles.buttontext}>{i18n.t('logout')}</Text>

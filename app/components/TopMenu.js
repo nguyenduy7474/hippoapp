@@ -2,8 +2,9 @@ import { View, StatusBar, StyleSheet, Text, TouchableOpacity } from 'react-nativ
 import { tabbarcolor, themeColor } from '../contants/style';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
+import { scale } from 'react-native-size-matters';
 
-export default function TopMenu({ signed = true }) {
+export default function TopMenu({ signed = true, leftdata}) {
 
     const onPressProfile = () => {
         if(signed){
@@ -16,7 +17,15 @@ export default function TopMenu({ signed = true }) {
 
     return (
         <View style={styles.container}>
-            <Text></Text>
+            {typeof leftdata == "number" ? (
+                <Text style={{
+                    color: "white",
+                    fontSize: scale(18)
+                }}>{leftdata}</Text>
+            ): (
+                <Text></Text>
+            )}
+            
             <TouchableOpacity onPress={onPressProfile}>
                 <Image source={require('../../assets/icon.png')} style={styles.icon} />
             </TouchableOpacity>

@@ -25,3 +25,10 @@ export const checkFirstTimeOpenApp = (data) => {
         payload: data
     }
 }
+
+export const checkCompleteQuiz = (data) => {
+    return {
+        type: "quiz/checkcompletequiz",
+        payload: data
+    }
+}

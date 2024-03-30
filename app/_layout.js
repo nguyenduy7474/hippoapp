@@ -2,17 +2,13 @@ import { Stack, router } from 'expo-router';
 import { tabbarcolor, themeColor } from './contants/style';
 import i18n from './i18n';
 import store from "./redux/store";
-import { Provider, useDispatch } from "react-redux";
+import { Provider } from "react-redux";
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import { useState, useEffect, useRef } from 'react';
 import { Platform, AppState } from 'react-native';
 import { checkVersionUpdate } from './api';
-
-
-import { saveQuestiosQuiz } from './redux/action';
-import { getQuestionsQuiz } from './api';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -42,7 +38,7 @@ async function registerForPushNotificationsAsync() {
       finalStatus = status;
     }
     if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
+      // alert('You will not receive notification until you enable');
       return;
     }
     token = await Notifications.getExpoPushTokenAsync({
@@ -90,15 +86,12 @@ export default function Layout() {
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        console.log('AppState', nextAppState);
         checkVersionUpdate().then((data) => {
-          console.info("🚀 ~ file: _layout.js:95 ~ checkVersionUpdate ~ data:", data)
           if (typeof data == "object" && !data.updateversion) {
             router.replace("/containers/NewVersion")
-          } else {
-            openQuiz()
           }
         })
+
       }
 
       appState.current = nextAppState;
@@ -113,6 +106,10 @@ export default function Layout() {
 
   useEffect(() => {
     stateapp()
+    setTimeout(() => {
+      openQuiz()
+    }, 2000)
+    
   }, []);
 
   return (
@@ -147,11 +144,18 @@ export default function Layout() {
         }}
         />
         <Stack.Screen name="containers/Profile/index" options={{
-          headerTitle: i18n.t('settings'),
-          gestureDirection: "horizontal",
-          gestureEnabled: true,
-          headerShown: false
-        }}
+            headerTitle: i18n.t('settings'),
+            gestureDirection: "horizontal",
+            gestureEnabled: true,
+            headerShown: false
+          }}
+        />
+          <Stack.Screen name="containers/Preferences/index" options={{
+            headerTitle: i18n.t('preferences'),
+            gestureDirection: "horizontal",
+            gestureEnabled: true,
+            headerShown: false
+          }}
         />
         <Stack.Screen name="containers/AddWord/index" options={{
           headerTitle: '',
