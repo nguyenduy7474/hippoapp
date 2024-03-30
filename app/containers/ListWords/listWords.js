@@ -56,7 +56,6 @@ export default function ListWordsComponent({ searchtext, orderType, setTotalWord
             if(dataWordSource.length == 0){
                 return
             }
-            console.info("🚀 ~ file: listWords.js:62 ~ listSearch ~ dataWordSource:", dataWordSource)
             let listSearch = dataWordSource.filter(item => {
                 let re = new RegExp(searchtext,"i");
                 if(re.test(item.word)){
