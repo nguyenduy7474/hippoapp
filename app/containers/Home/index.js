@@ -15,7 +15,8 @@ import i18n from '../../i18n';
 import { checkfirsttime } from '../../api';
 import { saveUserInfor } from '../../redux/action';
 import Loading from '../../components/Loading';
-
+import { isTablet } from 'react-native-device-info';
+import NetInfo from "@react-native-community/netinfo";
 
 const Tab = createBottomTabNavigator();
 
@@ -56,21 +57,25 @@ const HomePage = () => {
               const animationWord = useRef(null);
               let icon = require('../../../assets/lottie/book.json')
               let iconSize = Device.osName == "Android" ? scale(35) : scale(40)
+              iconSize = isTablet() ? scale(30) : scale(40)
 
               if (route.name === '/containers/LearnNow') {
                 icon = require('../../../assets/lottie/learnnow.json')
                 iconSize = Device.osName == "Android" ? scale(45) : scale(60)
+                iconSize = isTablet() ? scale(40) : scale(60)
               }
 
               if (route.name === '/containers/Schedule') {
                 icon = require('../../../assets/lottie/schedule.json')
                 iconSize = Device.osName == "Android" ? scale(35) : scale(50)
+                iconSize = isTablet() ? scale(35) : scale(50)
               }
 
               return (
                 <LottieView
                   ref={animationWord}
                   style={{
+                    marginRight: isTablet() ? 10 : 0,
                     width: iconSize,
                     height: iconSize,
                   }}

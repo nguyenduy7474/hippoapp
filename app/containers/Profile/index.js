@@ -17,6 +17,7 @@ import { colorWrong } from '../../contants/style';
 import { deleteUser, logOut } from '../../api';
 import StatusBarComponent from '../../components/StatusBar';
 import GobackMenu from '../../components/gobackMenu';
+import { isTablet } from 'react-native-device-info';
 
 export default function Profile() {
     const flashmessage = useRef()
@@ -154,22 +155,24 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     textinfo: {
-        fontSize: 18,
+        fontSize: isTablet() ? 30 : 18,
         fontWeight: "bold"
     },
     subtextinfo: {
-        marginTop: 10
+        marginTop: 10,
+        fontSize: isTablet() ? 22 : 14
     },
     subtextinfoDelete: {
         marginTop: 10,
-        color: "red"
+        color: "red",
+        fontSize: isTablet() ? 20 : 14
     },
     buttonadd: {
         backgroundColor: "#e0e0e0",
         width: "100%",
         marginTop: 10,
         alignItems: "center",
-        paddingVertical: 18,
+        paddingVertical: isTablet() ? 30 : 18,
         alignSelf: "center",
         borderRadius: 10,
         display: "flex",
@@ -178,7 +181,7 @@ const styles = StyleSheet.create({
     },
     buttontext: {
         color: "#787878",
-        fontSize: 18,
+        fontSize: isTablet() ? 30 : 18,
         fontWeight: "bold"
     },
     langview: {
@@ -206,7 +209,7 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
         borderRadius: 5,
         width: "40%",
-        alignItems: "center"
+        alignItems: "center",
     },
     buttonTextModal: {
         fontSize: scale(14),

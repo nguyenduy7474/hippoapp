@@ -55,9 +55,10 @@ export default function Quiz() {
     }
 
     const answerResult = (result) => {
+        console.info("🚀 ~ file: index.js:58 ~ answerResult ~ result:", result)
+        let nextprogress
         if(result){
-            let nextprogress
-            nextprogress = progresspercent + 1/(dataquiz.length)
+            nextprogress = progresspercent + 1/(dataquiz.length- failQuestion)
             
 
             if(dataquiz.length < 12){
@@ -76,10 +77,10 @@ export default function Quiz() {
                 }
                 setHeartnum(heartnum - 1)
             }
-
         }
-
-        if(nowCount + 1 == dataquiz.length){
+        let resultanswer = nextprogress * 100
+        resultanswer = Math.round(resultanswer)
+        if(nowCount + 1 == dataquiz.length || resultanswer == 100){
             setDone(true)
         }
         setNowCount(nowCount+1)
@@ -152,7 +153,7 @@ export default function Quiz() {
                             done={done}
                     />}
                     keyExtractor={(item) => item.word}
-                    estimatedItemSize={1}
+                    estimatedItemSize={dataquiz.length}
                     horizontal={true}
                     bounces={true}
                     scrollEnabled={false}

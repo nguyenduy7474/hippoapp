@@ -4,7 +4,6 @@ import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import { getLocales } from 'expo-localization';
 import { loadLanguageCode } from '../utils/loadlanguagecode';
-
 // const serverUrl = "https://613f-113-161-33-136.ngrok-free.app"
 const serverUrl = "https://node.hoitto.online"
 const ocrmUrl = "https://hoitto.online"
@@ -21,7 +20,7 @@ const loginCrm = ({ email, userid, firstname }) => {
             ok(response.data)
         })
         .catch(function (error) {
-            console.info("🚀 ~ file: ocrm.js:24 ~ returnnewPromise ~ error:", error)
+            console.info("🚀 ~ file: ocrm.js:24 ~ returnnewPromise ~ error:", error.response)
         })
     })
 }

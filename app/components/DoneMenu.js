@@ -3,6 +3,7 @@ import { tabbarcolor, themeColor } from '../contants/style';
 import { router } from 'expo-router';
 import i18n from '../i18n';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { isTablet } from 'react-native-device-info';
 
 
 export default function DoneMenu({ onDelete }) {
@@ -42,6 +43,6 @@ const styles = StyleSheet.create({
     donetitle: {
         color: "white",
         fontWeight: "bold",
-        fontSize: 18
+        fontSize: isTablet() ? 26 : 18
     }
 })

@@ -12,6 +12,7 @@ import CountryFlag from "react-native-country-flag";
 import { useEffect, useState } from "react";
 
 import { definitionbackground, tabbarcolor } from "../../contants/style";
+import { isTablet } from 'react-native-device-info';
 
 const screenHeight = Dimensions.get("screen").height
 const backgroundColorTrans = "#f2f2f2"
@@ -149,8 +150,9 @@ export default function TransalteWordModal({
 
 const styles = StyleSheet.create({
     translationsstyleview: {
-        margin: 5,
-        padding: 10,
+        margin: isTablet() ? 10 : 5,
+        marginLeft: 0,
+        padding: isTablet() ? 15 : 10,
         backgroundColor: backgroundColorTrans,
         borderRadius: 5
     },

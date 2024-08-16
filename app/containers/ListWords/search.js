@@ -3,6 +3,7 @@ import { Pressable, Text, View, StyleSheet, TextInput } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { tabbarcolor, themeColor, themeColor2 } from '../../contants/style';
 import i18n from '../../i18n';
+import { isTablet } from 'react-native-device-info';
 
 const searchColor = "#616161"
 
@@ -14,7 +15,7 @@ export default function Search({ onChangeText }) {
 
     return (
         <View style={styles.container}>  
-            <Ionicons name='search-outline' size={25} color={searchColor}/>
+            <Ionicons name='search-outline' size={isTablet() ? 35 : 25} color={searchColor}/>
             <TextInput
                 style={styles.input}
                 onChangeText={setValue}
@@ -33,10 +34,11 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         borderRadius: 10,
         display: "flex",
-        flexDirection: "row"
+        flexDirection: "row",
+        alignItems: "center"
     },
     input: {
-        fontSize: 20,
+        fontSize: isTablet() ? 30 : 20,
         color: searchColor,
         marginLeft: 5,
         fontWeight: "bold",

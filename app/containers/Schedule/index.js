@@ -12,6 +12,7 @@ import i18n from '../../i18n';
 import StatusBarComponent from '../../components/StatusBar'
 import TopMenu from '../../components/TopMenu';
 import { getSchedule, updateSchedule } from '../../api/ocrm';
+import { isTablet } from 'react-native-device-info';
 
 const isAndroid = Platform.OS === 'android'
 
@@ -74,6 +75,7 @@ export default function Schedule() {
 
     const dateWeekCheck = async () => {
         const check = await checkNotipermission()
+        console.info("🚀 ~ file: index.js:78 ~ dateWeekCheck ~ check:", check)
 
         if(check == "granted"){
             let dataSchedule = await getSchedule()
@@ -264,10 +266,10 @@ const styles = StyleSheet.create({
     textBox: {
         padding: 10,
         borderRadius: 10,
-        width: 100
+        width: isTablet() ? 200 : 100
     },
     timeText: {
-        fontSize: scale(18),
+        fontSize: isTablet() ? scale(14) : scale(18),
         color: "white",
     },
     daylearn: {

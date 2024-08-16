@@ -3,6 +3,7 @@ import { tabbarcolor, themeColor } from '../contants/style';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { scale } from 'react-native-size-matters';
+import { isTablet } from 'react-native-device-info';
 
 export default function TopMenu({ signed = true, leftdata}) {
 
@@ -12,7 +13,6 @@ export default function TopMenu({ signed = true, leftdata}) {
         }else{
             router.replace('/containers/Login');
         }
-        
     }
 
     return (
@@ -20,7 +20,7 @@ export default function TopMenu({ signed = true, leftdata}) {
             {typeof leftdata == "number" ? (
                 <Text style={{
                     color: "white",
-                    fontSize: scale(18)
+                    fontSize: isTablet() ? scale(12) : scale(18)
                 }}>{leftdata}</Text>
             ): (
                 <Text></Text>

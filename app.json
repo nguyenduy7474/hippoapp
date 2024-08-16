@@ -2,7 +2,8 @@
   "expo": {
     "name": "Hoitto",
     "slug": "hippo",
-    "version": "1.0.5",
+    "version": "1.0.6",
+    "owner": "hoitto",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -30,7 +31,7 @@
           }
         ]
       },
-      "buildNumber": "10"
+      "buildNumber": "11"
     },
     "android": {
       "adaptiveIcon": {
@@ -39,7 +40,7 @@
       },
       "package": "com.hippocampusvn",
       "googleServicesFile": "./google_services.json",
-      "versionCode": 3
+      "versionCode": 4
     },
     "web": {
       "favicon": "./assets/favicon.png"

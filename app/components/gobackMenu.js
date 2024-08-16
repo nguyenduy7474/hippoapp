@@ -1,9 +1,10 @@
-import { View, StatusBar, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StatusBar, StyleSheet, Text, TouchableOpacity, Button, Linking } from 'react-native';
 import { tabbarcolor, themeColor } from '../contants/style';
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { scale } from 'react-native-size-matters';
 import i18n from '../i18n';
+import { isTablet } from 'react-native-device-info';
 
 export default function GobackMenu({ signed = true, screenname }) {
 
@@ -11,19 +12,33 @@ export default function GobackMenu({ signed = true, screenname }) {
         router.back()
     }
 
+    const openZaloGroup = () => {        
+        Linking.openURL("https://zalo.me/g/uurivd642")
+    }
+
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={goBack} style={{ marginLeft: 10, padding: 10, paddingLeft: 0, width: scale(30), zIndex: 2 }}>
-                <Image source={require('../../assets/images/back.png')} style={{ width: scale(25), height: scale(25)}}/>
+            <TouchableOpacity onPress={goBack} style={styles.buttonHeader}>
+                <Image source={require('../../assets/images/back.png')} style={{ width: isTablet() ? scale(18) : scale(25), height: isTablet() ? scale(18) : scale(25)}}/>
             </TouchableOpacity>
             <View style={styles.viewtitle}>
                 <Text style={styles.title}>{i18n.t(screenname)}</Text>
             </View>
+            <TouchableOpacity onPress={openZaloGroup} style={{ marginRight: 10, backgroundColor: "white", borderRadius: 10, zIndex: 2 }}>
+                <Image source={require('../../assets/images/zalo_icon.png')} style={{ width: isTablet() ? scale(16) : scale(24), height: isTablet() ? scale(16) : scale(24)}}/>
+            </TouchableOpacity>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    buttonHeader: {
+        marginLeft: 10, 
+        padding: 10, 
+        paddingLeft: 0, 
+        width: scale(30), 
+        zIndex: 2
+    },
     container: {
         height: 50,
         width: "100%",
@@ -46,7 +61,7 @@ const styles = StyleSheet.create({
         zIndex: 1
     },
     title: {
-        fontSize: scale(16),
+        fontSize: isTablet() ? scale(14) : scale(16),
         color: "white",
         fontWeight: "bold"
     }

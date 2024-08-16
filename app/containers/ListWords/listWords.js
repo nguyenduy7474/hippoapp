@@ -10,6 +10,7 @@ import { updateListWordSelector } from '../../redux/selector';
 import { getListWord } from '../../api';
 import { tabbarcolor, themeColor3 } from '../../contants/style';
 import checkSpecialCharacter from '../../utils/checkSpecialCharacter';
+import { isTablet } from 'react-native-device-info';
 
 if (
     Platform.OS === 'android' &&
@@ -141,27 +142,29 @@ const styles = StyleSheet.create({
         alignItems: "center",
         alignSelf: "center",
         width: "100%",
-        height: 150,
-        marginBottom: 10
+        height: isTablet() ? 200 : 150,
+        marginBottom: 10,
+        
     },
     card: {
         backgroundColor: tabbarcolor,
         width: "100%",
         alignItems: "center",
         marginVertical: 10,
-        paddingVertical: 50,
-        paddingHorizontal: 5,
         borderRadius: 10,
+        justifyContent:"center",
         height:"100%",
+        paddingHorizontal: 10
     },
     cartext: {
         color: "white",
-        fontSize: 20,
-        fontWeight: "bold"
+        fontSize: isTablet() ? 30 : 20,
+        fontWeight: "bold",
+        textAlign: "center"
     },
     cartextdefi: {
         color: "white",
-        fontSize: 15,
+        fontSize: isTablet() ? 25 : 15,
         marginTop: 5
     },
 })

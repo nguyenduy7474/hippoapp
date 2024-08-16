@@ -6,6 +6,7 @@ import LottieView from 'lottie-react-native';
 import i18n from '../../i18n';
 import { scale } from 'react-native-size-matters';
 import { tabbarcolor } from '../../contants/style';
+import { isTablet } from 'react-native-device-info';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         borderRadius: 10,
         position: "absolute",
-        bottom: scale(50)
+        bottom: isTablet() ? scale(20) : scale(50)
     },
     congratulation: {
         alignSelf: "center",
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     congratulationsub: {
         alignSelf: "center",
         color: tabbarcolor,
-        fontSize: scale(25),
-        marginTop: scale(50)
+        fontSize: isTablet() ? scale(20) : scale(25),
+        marginTop: isTablet() ? scale(20) : scale(50)
     },
 })

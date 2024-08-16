@@ -7,6 +7,7 @@ import { scale } from 'react-native-size-matters';
 import { router } from 'expo-router';
 import { appUpdated, getReminderContent } from '../../api';
 import { Image } from 'expo-image';
+import { isTablet } from 'react-native-device-info';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 const isAndroid = Platform.OS === 'android'
 
@@ -27,7 +28,7 @@ export default function NewVersionScreen() {
             }}
             {...props}
         >
-            <Text style={{ fontSize: scale(16) }}>{i18n.t('skip')}</Text>
+            <Text style={{ fontSize: isTablet() ? scale(12) : scale(16) }}>{i18n.t('skip')}</Text>
         </Pressable>
     );
     const Next = ({ isLight, ...props }) => (

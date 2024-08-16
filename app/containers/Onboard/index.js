@@ -5,6 +5,7 @@ import Lottie from 'lottie-react-native';
 import i18n from '../../i18n';
 import { scale } from 'react-native-size-matters';
 import { router } from 'expo-router';
+import { isTablet } from 'react-native-device-info';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
@@ -25,7 +26,7 @@ export default function OnboardingScreen() {
             }}
             {...props}
         >
-            <Text style={{ fontSize: scale(16) }}>{i18n.t('skip')}</Text>
+            <Text style={{ fontSize: isTablet() ? scale(12) : scale(16) }}>{i18n.t('skip')}</Text>
         </Pressable>
     );
     const Next = ({ isLight, ...props }) => (
@@ -43,7 +44,7 @@ export default function OnboardingScreen() {
 
         return (
             <TouchableOpacity style={styles.doneButton} {...props}>
-                <Text style={{ fontWeight: "bold", fontSize: scale(16) }}>{i18n.t('start')}</Text>
+                <Text style={{ fontWeight: "bold", fontSize: isTablet() ? scale(12) : scale(16) }}>{i18n.t('start')}</Text>
             </TouchableOpacity>
         )
     }
@@ -69,7 +70,13 @@ export default function OnboardingScreen() {
                     // onSkip={handleDone}
                     // bottomBarHighlight={false}
                     DoneButtonComponent={doneButton}
-                    containerStyles={{ paddingHorizontal: 15 }}
+                    containerStyles={{ paddingHorizontal: 15, paddingBottom: 15 }}
+                    titleStyles={{
+                        fontSize: isTablet() ? scale(18) : scale(22)
+                    }}
+                    subTitleStyles={{
+                        fontSize: isTablet() ? scale(10) : scale(14),
+                    }}
                     pages={[
                         {
                             backgroundColor: '#a7f3d0',
@@ -122,7 +129,7 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
     },
     lottie: {
         width: width * 0.9,

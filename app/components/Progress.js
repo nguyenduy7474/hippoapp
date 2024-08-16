@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import * as Progress from 'react-native-progress';
 import { scale } from 'react-native-size-matters';
 import i18n from '../i18n';
+import { isTablet } from 'react-native-device-info';
 const windowWidth = Dimensions.get('window').width;
 
 export default function ProgressHeader({ number = undefined, progresspercent, heartnum = 3, endQuiz, dayquestion = false, lose = -1 }) {
@@ -22,7 +23,7 @@ export default function ProgressHeader({ number = undefined, progresspercent, he
         <View style={styles.container}>
             {dayquestion ? (
                 <TouchableOpacity onPress={goBack}  disabled={lose == 0 ? true : false}>
-                    <Image source={require('../../assets/images/close.png')} style={{ width: scale(20), height: scale(20)}}/>
+                    <Image source={require('../../assets/images/close.png')} style={{ width: isTablet() ? scale(14) : scale(20), height: isTablet() ? scale(14) : scale(20)}}/>
                 </TouchableOpacity>
             ): null }
             {dayquestion ? (
@@ -41,11 +42,11 @@ export default function ProgressHeader({ number = undefined, progresspercent, he
             {dayquestion ? (
                 <View style={styles.heart}>
                     <Text style={styles.heattext}>{heartnum}</Text>
-                    <Image source={require('../../assets/images/heart.png')} style={{ width: scale(20), height: scale(20)}}/>
+                    <Image source={require('../../assets/images/heart.png')} style={{ width: isTablet() ? scale(16) : scale(20), height: isTablet() ? scale(16) : scale(20)}}/>
                 </View>
             ): (
                 <TouchableOpacity onPress={endQuizNow} style={styles.buttonDone}>
-                    <Text style={{ color: "white", fontWeight: "bold"}}>{i18n.t("end_early")}</Text>
+                    <Text style={{ color: "white", fontWeight: "bold", fontSize: isTablet() ? 24 : 14}}>{i18n.t("end_early")}</Text>
                 </TouchableOpacity>
             )}
             
@@ -81,13 +82,13 @@ const styles = StyleSheet.create({
         marginRight: 5
     },
     point: {
-        fontSize: 25,
+        fontSize: isTablet() ? 35 : 25,
         fontWeight: "bold",
         color: tabbarcolor
     },
     buttonDone:{
         backgroundColor: tabbarcolor,
         padding: 5,
-        borderRadius:5
+        borderRadius:5,
     }
 })

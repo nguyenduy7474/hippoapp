@@ -14,6 +14,7 @@ import i18n from '../../i18n';
 import { checkNewVersion, getStoreUrl } from '../../utils/checkversion';
 import { checkVersionUpdate } from '../../api';
 import { scale } from 'react-native-size-matters';
+import { isTablet } from 'react-native-device-info';
 
 
 const TopComponent = ({ onChangeText, signed, orderType, changeOrderType}) => {
@@ -137,7 +138,7 @@ export default function ListWords({ signed = true }) {
 
 const styles = StyleSheet.create({
     orderText: {
-        fontSize: scale(14),
+        fontSize: isTablet() ? scale(10) : scale(14),
     },
     orderView: {
         display: "flex",
@@ -157,16 +158,17 @@ const styles = StyleSheet.create({
         width: "100%",
         marginTop: 10,
         alignItems: "center",
-        paddingVertical: 18,
+        paddingVertical: isTablet() ? 30 : 18,
         alignSelf: "center",
         borderRadius: 10,
         display: "flex",
         flexDirection: "row",
-        justifyContent: "center"
+        justifyContent: "center",
+
     },
     buttontext: {
         color: "white",
-        fontSize: 20,
+        fontSize: isTablet() ? 30 : 20,
         fontWeight: "bold"
     },
     centeredView: {

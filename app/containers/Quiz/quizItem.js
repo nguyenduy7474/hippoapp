@@ -10,6 +10,7 @@ import { endQuiz } from '../../api';
 import i18n from '../../i18n';
 import CountryFlag from 'react-native-country-flag';
 import { Feather } from '@expo/vector-icons';
+import { isTablet } from 'react-native-device-info';
 
 
 const statusBarHeight = Constants.statusBarHeight;
@@ -71,7 +72,11 @@ export default function QuizItem({
         if(doneAnswer){
             scrollTo(nextIndex)
         }else{
+            console.info("🚀 ~ file: quizItem.js:77 ~ answer ~ data.result:", data.result)
+            console.info("🚀 ~ file: quizItem.js:78 ~ answer ~ clickAnswer:", clickAnswer)
+            
             if(data.result != clickAnswer){ // wrong answer
+
                 answerResult(false)
                 setCorrect(0)
                 setBackgroundColor(colorWrong)
@@ -136,10 +141,10 @@ export default function QuizItem({
                     fontWeight: color ? "bold" : "black",
                 }]}>{item}</Text>
                 {correct == 1 || (correct == 0 && data.result == index) ? (
-                    <Image source={require('../../../assets/images/checkwhite.png')} style={{ width: scale(22), height: scale(22), marginRight: 10}}/>
+                    <Image source={require('../../../assets/images/checkwhite.png')} style={{ width: isTablet() ? scale(15) : scale(22), height: isTablet() ? scale(15) : scale(22), marginRight: 10}}/>
                 ): ""}
                 {correct == 0 && data.result != index? (
-                    <Image source={require('../../../assets/images/closewhite.png')} style={{ width: scale(18), height: scale(18), marginRight: 10}}/>
+                    <Image source={require('../../../assets/images/closewhite.png')} style={{ width: isTablet() ? scale(13) : scale(18), height: isTablet() ? scale(13) : scale(18), marginRight: 10}}/>
                 ): ""}
             </TouchableOpacity>
         )
@@ -155,7 +160,7 @@ export default function QuizItem({
 
     useEffect(() => {
         if(lose == 0){
-            setButtonText("go_back")
+            setButtonText("back")
         }else if(done){
             setButtonText("end_early")
         }else if(doneAnswer){
@@ -288,11 +293,11 @@ const styles = StyleSheet.create({
     },
     buttontext: {
         color: "white",
-        fontSize: 20,
+        fontSize: isTablet() ? 34 : 20,
         fontWeight: "bold"
     },
     question: {
-        fontSize: scale(16),
+        fontSize: isTablet() ? scale(12) : scale(16),
     },
     data: {
         marginVertical: 10,
@@ -310,7 +315,7 @@ const styles = StyleSheet.create({
     itemAnswer: {
         display: "flex",
         flexDirection: "row",
-        alignItems: "",
+        alignItems: "center",
         borderRadius: 10,
         borderWidth: 3,
         paddingVertical: windowHeight/40,
@@ -329,7 +334,7 @@ const styles = StyleSheet.create({
     },
     messageText: {
         color: "white",
-        fontSize: scale(14),
+        fontSize: isTablet() ? scale(12) : scale(14),
         fontWeight: "bold"
     },
     remindsentence: {
@@ -342,7 +347,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
     },
     blurtext:{
-        fontSize: 14,
+        fontSize: isTablet() ? 26 : 12,
     },
     absolute: {
         position: "absolute",

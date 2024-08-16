@@ -105,7 +105,7 @@ const Login = () => {
             setLoading(true)
             let typeLogin = "google-login"
             GoogleSignin.configure({
-                webClientId: '912000429184-81pu3kl9ahb3g74r6nga88011oe2sdjh.apps.googleusercontent.com',
+                // webClientId: '912000429184-81pu3kl9ahb3g74r6nga88011oe2sdjh.apps.googleusercontent.com',
                 iosClientId: '912000429184-qvldcep1aa6e6aak76sp2truv2cvp60t.apps.googleusercontent.com',
                 forceCodeForRefreshToken: true
             });
@@ -151,7 +151,6 @@ const Login = () => {
                     AppleAuthentication.AppleAuthenticationScope.EMAIL,
                 ],
             });
-            console.info("🚀 ~ file: index.js:156 ~ loginApple ~ credential:", credential)
             var datasave = JSON.parse(JSON.stringify(credential))
             datasave.typeLogin = typeLogin
             
@@ -194,14 +193,14 @@ const Login = () => {
                     </View>
                     <View style={styles.bottompart}>
                         <Text style={styles.quote}>"{i18n.t('quoteopenapp')}"</Text>
-                        <ButtonLogin
+{/*                         <ButtonLogin
                             text={i18n.t('login_with_fb')}
                             color="white"
                             iconname="logo-facebook"
                             iconcolor="white"
                             backgroundcolor="#31519a"
                             onPress={loginFacebook}
-                        />
+                        /> */}
                         <ButtonLogin
                             text={i18n.t('login_with_google')}
                             color="white"

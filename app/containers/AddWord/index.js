@@ -8,6 +8,7 @@ import {
     Dimensions, 
     KeyboardAvoidingView, 
     ScrollView,
+    SafeAreaView,
     PixelRatio, 
     Switch
 } from 'react-native';
@@ -38,6 +39,7 @@ import updateListWordType from '../../utils/updatelistwordtype';
 import DeleteWordModal from './modaldeleteword';
 import TransalteWordModal from './translatewordmodal';
 import { loadLanguageCode } from '../../utils/loadlanguagecode';
+import { isTablet } from 'react-native-device-info';
 
 const statusBarHeight = Constants.statusBarHeight;
 const windowHeight = Dimensions.get('window').height;
@@ -267,146 +269,148 @@ export default function AddWord() {
                 behavior={Platform.OS == "ios" ? "padding" : null}
                 enabled
             >
-                <ScrollView >
-                    <View style={styles.topView}>
+                <ScrollView style={styles.topView} contentContainerStyle={{flexGrow: 1}}>
+                    <View style={styles.styleviewtop}>
                         <Image source={require('../../../assets/images/writebook.png')} style={styles.image} />
                         <Text style={styles.textdes}>{i18n.t('guildaddword')}</Text>
+                    </View>
+                    <Dropdown
+                        style={styles.dropdown}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        inputSearchStyle={styles.inputSearchStyle}
+                        iconStyle={styles.iconStyle}
+                        data={languagejson}
+                        search={true}
+                        maxHeight={isTablet() ? 400 : 300}
+                        labelField="name"
+                        valueField="code"
+                        searchField="name"
+                        placeholder="Chọn ngôn ngữ"
+                        searchPlaceholder="Tìm ngôn ngữ..."
+                        autoScroll={true}
+                        flatListProps={{
+                            initialNumToRender: 37
+                        }}
+                        value={languageCode}
+                        onChange={item => {
+                            updateTargetLanguage(item)
+                        }}
+                        renderLeftIcon={() => (
+                                <View style={{ marginRight: scale(5) }}>
+                                    {countryCode ? (
+                                        <CountryFlag isoCode={countryCode || ""} size={isTablet() ? scale(25) : scale(30)} style={{ borderRadius: scale(5) }} />
+                                    ): null}
+                                </View>
+                            )
+                        }
+                        renderItem={renderItem}
+                    />
 
-                        <Dropdown
-                            style={styles.dropdown}
-                            placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            inputSearchStyle={styles.inputSearchStyle}
-                            iconStyle={styles.iconStyle}
-                            data={languagejson}
-                            search={true}
-                            maxHeight={300}
-                            labelField="name"
-                            valueField="code"
-                            searchField="name"
-                            placeholder="Chọn ngôn ngữ"
-                            searchPlaceholder="Tìm ngôn ngữ..."
-                            autoScroll={true}
-                            flatListProps={{
-                                initialNumToRender: 37
-                            }}
-                            value={languageCode}
-                            onChange={item => {
-                                updateTargetLanguage(item)
-                            }}
-                            renderLeftIcon={() => (
-                                    <View style={{ marginRight: scale(5) }}>
-                                        {countryCode ? (
-                                            <CountryFlag isoCode={countryCode || ""} size={scale(30)} style={{ borderRadius: scale(5) }} />
-                                        ): null}
-                                    </View>
-                                )
-                            }
-                            renderItem={renderItem}
+                    <RNPickerSelect
+                            onValueChange={setWordType}
+                            items={wordtypedata}
+                            style={pickerStyle}
+                            value={wordtype}
+                            placeholder={{ "label": i18n.t('word_type') }}
                         />
-
-                        <RNPickerSelect
-                                onValueChange={setWordType}
-                                items={wordtypedata}
-                                style={pickerStyle}
-                                value={wordtype}
-                                placeholder={{ "label": i18n.t('word_type') }}
-                            />
-                        <View
-                            style={styles.wordView}
-                        >
-                            <TextInput
-                                style={[styles.input, { 
-                                    width: "85%", 
-                                    borderTopRightRadius: 0,
-                                    borderBottomRightRadius: 0
-                                }]}
-                                onChangeText={typeWord}
-                                value={word}
-                                // autoFocus
-                                placeholder={`${i18n.t('words')}(${i18n.t('require')})`}
-                            />
-                            <View style={[styles.input, {
-                                width: "15%",
-                                borderTopLeftRadius: 0,
-                                borderBottomLeftRadius: 0,
-                                alignItems: "center",
-                                justifyContent: "center"
-                            }]}>
-                                {languageCode 
-                                && word 
-                                && loadingTranslateWord
-                                ? (
+                    <View
+                        style={styles.wordView}
+                    >
+                        <TextInput
+                            style={[styles.input, { 
+                                width: "85%", 
+                                borderTopRightRadius: 0,
+                                borderBottomRightRadius: 0
+                            }]}
+                            onChangeText={typeWord}
+                            value={word}
+                            // autoFocus
+                            placeholder={`${i18n.t('words')}(${i18n.t('require')})`}
+                        />
+                        <View style={[styles.input, {
+                            width: "15%",
+                            borderTopLeftRadius: 0,
+                            borderBottomLeftRadius: 0,
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }]}>
+                            {languageCode 
+                            && word 
+                            && loadingTranslateWord
+                            ? (
+                                <LottieView
+                                    autoPlay={true}
+                                    style={{
+                                        width: isTablet() ? "80%" : "100%",
+                                        position: "absolute",
+                                        zIndex: 10,
+                                    }}
+                                    // Find more Lottie files at https://lottiefiles.com/featured
+                                    source={require('../../../assets/lottie/loadingtranslate.json')}
+                                />
+                            ): null}
+                            {languageCode 
+                            && word 
+                            && !loadingTranslateWord 
+                            && Object.keys(dataTranslate).length > 0 ? (
+                                <TouchableOpacity
+                                    onPress={openModalTranslate}
+                                    style={{
+                                        width: "100%",
+                                        position: "absolute",
+                                        zIndex: 10,
+                                    }}
+                                >
                                     <LottieView
                                         autoPlay={true}
+                                        loop={false}
                                         style={{
-                                            width: "100%",
-                                            position: "absolute",
-                                            zIndex: 10,
+                                            width: isTablet() ? "80%" : "100%"
                                         }}
                                         // Find more Lottie files at https://lottiefiles.com/featured
-                                        source={require('../../../assets/lottie/loadingtranslate.json')}
+                                        source={require('../../../assets/lottie/info.json')}
                                     />
-                                ): null}
-                                {languageCode 
-                                && word 
-                                && !loadingTranslateWord 
-                                && Object.keys(dataTranslate).length > 0 ? (
-                                    <TouchableOpacity
-                                        onPress={openModalTranslate}
-                                        style={{
-                                            width: "100%",
-                                            position: "absolute",
-                                            zIndex: 10,
-                                        }}
-                                    >
-                                        <LottieView
-                                            autoPlay={true}
-                                            loop={false}
-                                            style={{
-                                                width: "100%"
-                                            }}
-                                            // Find more Lottie files at https://lottiefiles.com/featured
-                                            source={require('../../../assets/lottie/info.json')}
-                                        />
-                                    </TouchableOpacity>
-                                ): null} 
-                            </View>
-
+                                </TouchableOpacity>
+                            ): null} 
                         </View>
 
-
-
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={setDefinition}
-                            value={definition}
-                            placeholder={`${i18n.t('definition')}(${i18n.t('require')})`}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={setRemindSentence}
-                            value={remindSentence}
-                            placeholder={i18n.t('sentence')}
-                        />
-                        <View style={{ bottom: scale(50), position: "absolute", width: "100%" }}>
-                            <FlashMessage
-                                ref={flashmessage}
-                                floating={true}
-                                position="bottom"
-                                icon="success"
-                                style={{
-                                    bottom: Platform.OS === 'android' ? scale(50) : scale(20),
-                                    width: "100%",
-                                    alignSelf: "center"
-                                }}
-                            />
-                            <TouchableOpacity style={styles.buttonadd} onPress={saveWord}>
-                                <Text style={styles.buttontext}>{i18n.t('save')}</Text>
-                            </TouchableOpacity>
-                        </View>
                     </View>
+
+
+
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setDefinition}
+                        value={definition}
+                        placeholder={`${i18n.t('definition')}(${i18n.t('require')})`}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setRemindSentence}
+                        value={remindSentence}
+                        placeholder={i18n.t('sentence')}
+                    />
+                    <View style={{ bottom: isTablet() ? scale(120) : scale(50), position: "absolute", width: "100%" }}>
+                        <FlashMessage
+                            ref={flashmessage}
+                            floating={true}
+                            position="bottom"
+                            icon="success"
+                            style={{
+                                bottom: Platform.OS === 'android' ? scale(50) : scale(20),
+                                width: "100%",
+                                alignSelf: "center",
+                            }}
+ 
+                        />
+                    </View> 
+                    <TouchableOpacity style={styles.buttonadd} onPress={saveWord}>
+                        <Text style={styles.buttontext}>{i18n.t('save')}</Text>
+                    </TouchableOpacity>
+
                 </ScrollView>
+
             </KeyboardAvoidingView>
             <DeleteWordModal 
                 isVisibleModal={isVisibleModal}
@@ -437,10 +441,11 @@ const pickerStyle = StyleSheet.create({
         width: "100%",
         paddingVertical: 20,
         borderRadius: 10,
-        fontSize: scale(16),
+        fontSize: isTablet() ? scale(14) : scale(16),
         color: textColor,
         paddingLeft: 10,
-        marginTop: 20
+        marginTop: isTablet() ? 30 : 20,
+        height: isTablet() ? scale(50) : "auto"
     },
     inputAndroid: {
         backgroundColor: inputbackgroundcolor,
@@ -472,34 +477,38 @@ const pickerStyle = StyleSheet.create({
 
 const styles = StyleSheet.create({
     container: {
-
+        flexGrow: 1,
     },
     input: {
         backgroundColor: inputbackgroundcolor,
         width: "100%",
-        marginTop: 20,
+        marginTop: isTablet() ? 30 : 20,
         paddingVertical: 20,
         borderRadius: 10,
-        fontSize: scale(16),
+        fontSize: isTablet() ? scale(14) : scale(16),
         color: textColor,
-        paddingLeft: 10
+        paddingLeft: 10,
+        height: isTablet() ? scale(50) : ""
     },
     textdes: {
-        fontSize: scale(16),
+        fontSize: isTablet() ? scale(14) : scale(16),
         textAlign: "center",
         width: "70%",
         marginTop: 20,
         color: textColor
     },
     topView: {
-        paddingHorizontal: 10,
-        paddingTop: scale(25),
-        alignItems: "center",
-        height: windowHeight - statusBarHeight - 50,
+        paddingHorizontal: isTablet() ? 20 : 10,
+        paddingTop: isTablet() ? scale(15) : scale(25),
+        // alignItems: "center",
     },
     image: {
-        width: scale(80),
-        height: scale(80),
+        width: isTablet() ? scale(50) : scale(80),
+        height: isTablet() ? scale(50) : scale(80),
+    },
+    styleviewtop: {
+        alignItems: "center",
+        width: "100%"
     },
     buttonadd: {
         backgroundColor: tabbarcolor,
@@ -508,6 +517,8 @@ const styles = StyleSheet.create({
         paddingVertical: 18,
         alignSelf: "center",
         borderRadius: 10,
+        marginTop: isTablet() ? 30 : 20,
+        marginBottom: isTablet() ? scale(100) : scale(50)
         // position: "absolute",
         // bottom: scale(50)
     },
@@ -554,21 +565,21 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 12,
         width: "100%",
-        marginTop: 20
+        marginTop: 20,
     },
     placeholderStyle: {
         fontSize: scale(16),
     },
     selectedTextStyle: {
-        fontSize: scale(16),
-        color: textColor
+        fontSize: isTablet() ? scale(14) : scale(16),
+        color: textColor,
     },
     iconStyle: {
         width: 20,
         height: 20,
     },
     inputSearchStyle: {
-        height: 40,
+        height: isTablet() ? 100 : 40,
         fontSize: scale(16),
         color: textColor
     },
