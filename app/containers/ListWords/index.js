@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, TouchableOpacity, Modal, Linking } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Modal, Linking, Alert } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
@@ -15,7 +15,6 @@ import { checkNewVersion, getStoreUrl } from '../../utils/checkversion';
 import { checkVersionUpdate } from '../../api';
 import { scale } from 'react-native-size-matters';
 import { isTablet } from 'react-native-device-info';
-
 
 const TopComponent = ({ onChangeText, signed, orderType, changeOrderType}) => {
 
@@ -81,6 +80,7 @@ export default function ListWords({ signed = true }) {
     const [modalVisible, setModalVisible] = useState(false);
     const [totalWord, setTotalWord] = useState(0)
 
+    
     const [orderType, setOrderType] = useState({
         "text": i18n.t('newest'),
         "icon": "arrowup"
@@ -106,9 +106,7 @@ export default function ListWords({ signed = true }) {
 
     useEffect(() => {
         SplashScreen.hideAsync();
-
         checkNewVersion().then((needsUpdate) => {
-            // setModalVisible(true)
             if (needsUpdate) {
                 setModalVisible(true)
                 return

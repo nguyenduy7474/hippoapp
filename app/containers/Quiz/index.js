@@ -55,11 +55,9 @@ export default function Quiz() {
     }
 
     const answerResult = (result) => {
-        console.info("🚀 ~ file: index.js:58 ~ answerResult ~ result:", result)
         let nextprogress
         if(result){
             nextprogress = progresspercent + 1/(dataquiz.length- failQuestion)
-            
 
             if(dataquiz.length < 12){
             }else{
@@ -152,7 +150,7 @@ export default function Quiz() {
                             questionname={dataQuizFetchData.questionsDoc.name}
                             done={done}
                     />}
-                    keyExtractor={(item) => item.word}
+                    keyExtractor={(item) => item.name}
                     estimatedItemSize={dataquiz.length}
                     horizontal={true}
                     bounces={true}

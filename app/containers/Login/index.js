@@ -105,7 +105,7 @@ const Login = () => {
             setLoading(true)
             let typeLogin = "google-login"
             GoogleSignin.configure({
-                // webClientId: '912000429184-81pu3kl9ahb3g74r6nga88011oe2sdjh.apps.googleusercontent.com',
+                // webClientId: '912000429184-d93qqn2fa57c9ijm0tpe9qgrku6corv2.apps.googleusercontent.com',
                 iosClientId: '912000429184-qvldcep1aa6e6aak76sp2truv2cvp60t.apps.googleusercontent.com',
                 forceCodeForRefreshToken: true
             });

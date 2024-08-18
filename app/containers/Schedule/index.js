@@ -75,7 +75,6 @@ export default function Schedule() {
 
     const dateWeekCheck = async () => {
         const check = await checkNotipermission()
-        console.info("🚀 ~ file: index.js:78 ~ dateWeekCheck ~ check:", check)
 
         if(check == "granted"){
             let dataSchedule = await getSchedule()

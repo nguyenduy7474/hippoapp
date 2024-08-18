@@ -16,7 +16,6 @@ import { checkfirsttime } from '../../api';
 import { saveUserInfor } from '../../redux/action';
 import Loading from '../../components/Loading';
 import { isTablet } from 'react-native-device-info';
-import NetInfo from "@react-native-community/netinfo";
 
 const Tab = createBottomTabNavigator();
 

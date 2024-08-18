@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 var pjson = require('../../../package.json');
 import * as SecureStore from 'expo-secure-store';
 import { router } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import FlashMessage from "react-native-flash-message";
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { scale } from 'react-native-size-matters';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
@@ -18,12 +18,15 @@ import { deleteUser, logOut } from '../../api';
 import StatusBarComponent from '../../components/StatusBar';
 import GobackMenu from '../../components/gobackMenu';
 import { isTablet } from 'react-native-device-info';
+import { addEventListener } from "@react-native-community/netinfo";
+import { Image } from 'expo-image';
 
 export default function Profile() {
     const flashmessage = useRef()
     const userInfor = useSelector(saveUserInforSelector)
     const [isVisibleModal, setIsVisibleModal] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [haveInternet, setHaveInternet] = useState(false)
 
     const logout = async () => {
         await logOut()
@@ -69,6 +72,17 @@ export default function Profile() {
         setIsVisibleModal(false)
     }
 
+    useEffect(() => {
+        const unsubscribe = addEventListener(state => {
+            if(state.isConnected){
+                setHaveInternet(true)
+            }else{
+                setHaveInternet(false)
+            }
+        });
+        return () => unsubscribe();
+    }, [])
+
     return (
         <>
             <StatusBarComponent />
@@ -90,7 +104,16 @@ export default function Profile() {
                 <View style={styles.langview}>
                     <Language showmessage={showmessage} />
                 </View>
-                <Text style={styles.subtextinfo}>{i18n.t('version')}: {pjson.version}</Text>
+                <View style={styles.smallView}>
+                    <Text style={styles.subtextinfo}>{i18n.t('version')}: {pjson.version}</Text>
+                    {haveInternet ? (
+                        <Image source={require('../../../assets/trueinternet.png')} style={styles.dotStyle}/>
+                    ): (
+                        <Image source={require('../../../assets/falseinternet.png')} style={styles.dotStyle}/>
+                    )}
+                    
+                </View>
+                
 
                 <TouchableOpacity onPress={deleteAccountAsk}>
                     <Text style={styles.subtextinfoDelete}>{i18n.t('delete_account')}</Text>
@@ -147,6 +170,15 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
+    dotStyle: {
+        width: 30, 
+        height: 30
+    },
+    smallView: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center"
+    },
     container: {
         flex: 1,
         paddingHorizontal: 10,

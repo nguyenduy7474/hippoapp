@@ -70,13 +70,17 @@ export default function QuizItem({
             return
         }
         if(doneAnswer){
+            setCorrect(-1)
+            setBackgroundColor("white")
+            setClickAnswer(-1)
+            setTextColor("black")
+            setDoneAnswer(false)
+            setBbuttonBackgroundColor("#f0f0f0")
             scrollTo(nextIndex)
         }else{
-            console.info("🚀 ~ file: quizItem.js:77 ~ answer ~ data.result:", data.result)
-            console.info("🚀 ~ file: quizItem.js:78 ~ answer ~ clickAnswer:", clickAnswer)
-            
-            if(data.result != clickAnswer){ // wrong answer
 
+            if(data.result != clickAnswer){ // wrong answer
+                    
                 answerResult(false)
                 setCorrect(0)
                 setBackgroundColor(colorWrong)
@@ -85,6 +89,7 @@ export default function QuizItem({
                 dataquiz[index].correct = 0
                 
             }else{ // correcr answer
+
                 setCorrect(1)
                 answerResult(true)
                 setCountCorrect(countcorrect + 0.1)
@@ -92,6 +97,7 @@ export default function QuizItem({
                 setTextColor("white")
                 dataquiz[index].correct = 1
             }
+
             setDataQuiz(dataquiz)
             setDoneAnswer(true)
         }
@@ -159,6 +165,7 @@ export default function QuizItem({
     }
 
     useEffect(() => {
+
         if(lose == 0){
             setButtonText("back")
         }else if(done){
@@ -166,6 +173,7 @@ export default function QuizItem({
         }else if(doneAnswer){
             setButtonText("next")
         }
+        
     }, [lose, doneAnswer, done])
 
     useEffect(() => {

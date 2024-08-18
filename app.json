@@ -2,7 +2,7 @@
   "expo": {
     "name": "Hoitto",
     "slug": "hippo",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "owner": "hoitto",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
