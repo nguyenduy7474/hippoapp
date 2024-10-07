@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import { SplashScreen } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
+import { addEventListener } from "@react-native-community/netinfo";
 
 import StatusBarComponent from '../../components/StatusBar'
 import TopMenu from '../../components/TopMenu'
@@ -15,8 +16,9 @@ import { checkNewVersion, getStoreUrl } from '../../utils/checkversion';
 import { checkVersionUpdate } from '../../api';
 import { scale } from 'react-native-size-matters';
 import { isTablet } from 'react-native-device-info';
+import syncWordData from '../../utils/syncdata';
 
-const TopComponent = ({ onChangeText, signed, orderType, changeOrderType}) => {
+const TopComponent = ({ onChangeText, signed, orderType, changeOrderType }) => {
 
     const addNewWord = async () => {
         router.push("containers/AddWord")
@@ -31,7 +33,7 @@ const TopComponent = ({ onChangeText, signed, orderType, changeOrderType}) => {
             <Search onChangeText={onChangeText} />
             <View style={styles.orderView}>
                 <Text></Text>
-                <TouchableOpacity 
+                <TouchableOpacity
                     onPress={changeOrderType}
                     style={{
                         display: "flex",
@@ -60,18 +62,18 @@ const ModalUpdate = ({ modalVisible }) => {
             transparent={true}
             visible={modalVisible}
         >
-        <View style={styles.centeredView}>
-        </View>
-        <View style={styles.centeredView2}>
-            <View style={styles.modalView}>
-                <Text style={styles.modalText}>{i18n.t('need_update')}</Text>
-                <TouchableOpacity style={styles.updatebutton} onPress={toStore}>
-                    <Text style={{ color: "white", fontWeight: "bold" }}>{i18n.t('update_button')}</Text>
-                </TouchableOpacity>
+            <View style={styles.centeredView}>
             </View>
+            <View style={styles.centeredView2}>
+                <View style={styles.modalView}>
+                    <Text style={styles.modalText}>{i18n.t('need_update')}</Text>
+                    <TouchableOpacity style={styles.updatebutton} onPress={toStore}>
+                        <Text style={{ color: "white", fontWeight: "bold" }}>{i18n.t('update_button')}</Text>
+                    </TouchableOpacity>
+                </View>
 
-        </View>
-    </Modal>
+            </View>
+        </Modal>
     )
 }
 
@@ -79,20 +81,19 @@ export default function ListWords({ signed = true }) {
     const [searchtext, setSearchtext] = useState("")
     const [modalVisible, setModalVisible] = useState(false);
     const [totalWord, setTotalWord] = useState(0)
-
-    
+    const [syncLoading, setSyncLoading] = useState(0) //0: không sync, 1: đang sync, 2: đã sync
     const [orderType, setOrderType] = useState({
         "text": i18n.t('newest'),
         "icon": "arrowup"
     })
 
     const changeOrderType = () => {
-        if(orderType.icon == "arrowup"){
+        if (orderType.icon == "arrowup") {
             setOrderType({
                 "text": i18n.t('oldest'),
                 "icon": "arrowdown"
             })
-        }else{
+        } else {
             setOrderType({
                 "text": i18n.t('newest'),
                 "icon": "arrowup"
@@ -105,6 +106,14 @@ export default function ListWords({ signed = true }) {
     }
 
     useEffect(() => {
+        if(syncLoading == 1){
+            syncWordData(true).then(() => {
+                setSyncLoading(2)
+            })
+        }
+    }, [syncLoading])
+
+    useEffect(() => {
         SplashScreen.hideAsync();
         checkNewVersion().then((needsUpdate) => {
             if (needsUpdate) {
@@ -112,23 +121,40 @@ export default function ListWords({ signed = true }) {
                 return
             }
             checkVersionUpdate().then((data) => {
-                if(typeof data == "object" && !data.updateversion){
+                if (typeof data == "object" && !data.updateversion) {
                     router.replace("/containers/NewVersion")
                 }
 
             })
         })
+        const unsubscribe = addEventListener(async (state) => {
+            if (state.isConnected) {
+                setSyncLoading(1)
+            } else {
+                setSyncLoading(0)
+            }
+        });
+        return () => unsubscribe();
     }, [])
 
     return (
         <View style={{ flex: 1 }}>
             <StatusBarComponent />
-            <TopMenu signed={signed} leftdata={totalWord}/>
-            <TopComponent onChangeText={onChangeText} signed={signed} orderType={orderType} changeOrderType={changeOrderType}/>
+            <TopMenu 
+                signed={signed} 
+                leftdata={totalWord} 
+                syncLoading={syncLoading}
+            />
+            <TopComponent onChangeText={onChangeText} signed={signed} orderType={orderType} changeOrderType={changeOrderType} />
             {signed ? (
-                <ListWordsComponent searchtext={searchtext} orderType={orderType} setTotalWord={setTotalWord}/>
-            ): null}
-            
+                <ListWordsComponent 
+                    searchtext={searchtext} 
+                    orderType={orderType} 
+                    setTotalWord={setTotalWord} 
+                    syncLoading={syncLoading}
+                />
+            ) : null}
+
             <ModalUpdate modalVisible={modalVisible} />
         </View>
     );
@@ -150,7 +176,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 10,
         marginTop: 25
-    },  
+    },
     buttonadd: {
         backgroundColor: meaningbackground,
         width: "100%",
@@ -176,7 +202,7 @@ const styles = StyleSheet.create({
         width: "100%",
         zIndex: 3,
         opacity: 0.5
-    },  
+    },
     centeredView2: {
         flex: 1,
         justifyContent: 'center',

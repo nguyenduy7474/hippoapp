@@ -24,6 +24,7 @@ const HomePage = () => {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
+    
     checkfirsttime().then((data) => {
       if (data) {
         dispatch(saveUserInfor(data))

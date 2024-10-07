@@ -11,7 +11,7 @@ import { meaningbackground, tabbarcolor, themeColor2 } from '../../contants/styl
 import i18n from '../../i18n';
 import StatusBarComponent from '../../components/StatusBar'
 import TopMenu from '../../components/TopMenu';
-import { getSchedule, updateSchedule } from '../../api/ocrm';
+import { getSchedule, updateSchedule } from '../../api';
 import { isTablet } from 'react-native-device-info';
 
 const isAndroid = Platform.OS === 'android'

@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
         fontSize: isTablet() ? scale(14) : scale(16),
         color: textColor,
         paddingLeft: 10,
-        height: isTablet() ? scale(50) : ""
+        height: isTablet() ? scale(50) : "auto"
     },
     textdes: {
         fontSize: isTablet() ? scale(14) : scale(16),

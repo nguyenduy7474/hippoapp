@@ -1,7 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 import * as AppleAuthentication from 'expo-apple-authentication';
-import { checkTokenWork, checkTokenWorkGG } from '../api';
-import { checkTokenUseable } from "../api/ocrm";
+import { checkTokenWork, checkTokenWorkGG, checkTokenUseable } from '../api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
     GoogleSignin,

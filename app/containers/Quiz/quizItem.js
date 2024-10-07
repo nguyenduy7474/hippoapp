@@ -44,7 +44,7 @@ export default function QuizItem({
     const [disabledButton, setDisabledButton] = useState(false)
 
     const answer = async () => {
-        removeblur()
+        
         if(lose == 0){
             setDisabledButton(true)
             await endQuiz({ questionname, dataquiz })
@@ -70,6 +70,7 @@ export default function QuizItem({
             return
         }
         if(doneAnswer){
+            setBlur(true)
             setCorrect(-1)
             setBackgroundColor("white")
             setClickAnswer(-1)
@@ -80,7 +81,7 @@ export default function QuizItem({
         }else{
 
             if(data.result != clickAnswer){ // wrong answer
-                    
+                removeblur()
                 answerResult(false)
                 setCorrect(0)
                 setBackgroundColor(colorWrong)
@@ -147,10 +148,10 @@ export default function QuizItem({
                     fontWeight: color ? "bold" : "black",
                 }]}>{item}</Text>
                 {correct == 1 || (correct == 0 && data.result == index) ? (
-                    <Image source={require('../../../assets/images/checkwhite.png')} style={{ width: isTablet() ? scale(15) : scale(22), height: isTablet() ? scale(15) : scale(22), marginRight: 10}}/>
+                    <Image source={require('../../../assets/images/checkwhite.png')} style={{ width: isTablet() ? scale(15) : scale(18), height: isTablet() ? scale(15) : scale(18), marginRight: 10}}/>
                 ): ""}
                 {correct == 0 && data.result != index? (
-                    <Image source={require('../../../assets/images/closewhite.png')} style={{ width: isTablet() ? scale(13) : scale(18), height: isTablet() ? scale(13) : scale(18), marginRight: 10}}/>
+                    <Image source={require('../../../assets/images/closewhite.png')} style={{ width: isTablet() ? scale(13) : scale(15), height: isTablet() ? scale(13) : scale(15), marginRight: 10}}/>
                 ): ""}
             </TouchableOpacity>
         )

@@ -10,6 +10,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Platform, AppState, Alert } from 'react-native';
 import { checkVersionUpdate } from './api';
 import { addEventListener } from "@react-native-community/netinfo";
+import syncWordData from './utils/syncdata';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -114,12 +115,11 @@ export default function Layout() {
     }, 2000)
 /*     const unsubscribe = addEventListener(state => {
       if(state.isConnected){
-        Alert.alert('Alert connected')
+        syncWordData()
       }else{
-        Alert.alert('Alert false')
+        console.info("false")
       }
     });
-
     return () => unsubscribe(); */
   }, []);
 

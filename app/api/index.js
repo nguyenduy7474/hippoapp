@@ -1,14 +1,6 @@
 import { checkTokenWork, getProfile } from "./fb";
 import {
-    loginCrm, 
-    updateWord, 
-    getListWord, 
-    getWord, 
-    deleteWord, 
-    getQuestionsQuiz, 
-    updateSchedule, 
     getSchedule, 
-    endQuiz, 
     checkfirsttime, 
     updateFirstSigned,
     getTranslateJson,
@@ -17,14 +9,36 @@ import {
     getReminderContent,
     checkVersionUpdate,
     appUpdated,
-    changeLanguageModule,
-    updateLanguageCodeLearn,
     getReminderVocabulary,
+} from "./ocrmapi/ocrm";
+
+import {
+    updateWord,
+    getListWord,
+    getWord,
+    deleteWord,
+    updateLanguageAllWord
+} from "./ocrmapi/word";
+
+import {
+    changeLanguageModule,
+    updateLanguageCodeLearn
+} from "./ocrmapi/language";
+
+import {
+    endQuiz,
+    checkCompleteQuizToday
+} from "./ocrmapi/quiz";
+
+import {
+    loginCrm,
+    checkTokenUseable,
+    getQuestionsQuiz,
+    updateSchedule,
     getWordType,
     translateWord,
-    updateLanguageAllWord,
-    checkCompleteQuizToday
-} from "./ocrm";
+} from "./nodeapi";
+
 import { checkTokenWorkGG } from "./google";
 
 export {
@@ -54,5 +68,6 @@ export {
     getWordType,
     translateWord,
     updateLanguageAllWord,
-    checkCompleteQuizToday
+    checkCompleteQuizToday,
+    checkTokenUseable
 }
